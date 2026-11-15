@@ -162,7 +162,7 @@ img{image-rendering:pixelated;-webkit-user-drag:none;pointer-events:none}
   <div id="coins" class="ts"><img id="coinI" alt=""><span id="coinT">0</span><span id="safe" class="hidden"></span></div>
   <div id="lvl" class="ts"><b id="lvT">Nv 1</b><div class="xb"><i id="xpB"></i></div></div>
 </div>
-<div id="quest" class="panel"><small>MISIÓN <span id="qN"></span></small><div id="qT"></div><div class="prog" id="qP"><i id="qB"></i></div><div id="qR"></div><div class="mini"><b>Misión</b><span id="qMn"></span><div class="bar"><i id="qMb"></i></div></div><div class="qh" id="qH">‹</div></div>
+<div id="quest" class="panel hidden"><small>MISIÓN <span id="qN"></span></small><div id="qT"></div><div class="prog" id="qP"><i id="qB"></i></div><div id="qR"></div><div class="mini"><b>Misión</b><span id="qMn"></span><div class="bar"><i id="qMb"></i></div></div><div class="qh" id="qH">‹</div></div>
 <div id="topr"><button class="ibtn panel" id="bVil"><img id="bVilI" alt=""></button><button class="ibtn panel" id="bInv"><img id="bInvI" alt=""></button><button class="ibtn panel" id="bSnd"><img id="bSndI" alt=""></button><button class="ibtn panel" id="bHelp">?</button><button class="ibtn panel" id="bMenu">≡</button></div>
 <div id="toast" class="panel ts"></div>
 <div id="feed"></div>
@@ -298,6 +298,7 @@ it(111,'Carbón');
 it(112,'Manzana',{food:[10,4]});
 it(113,'Cantimplora vacía',{stack:1});
 it(114,'Cantimplora llena',{stack:1,food:[0,45]});
+it(146,'Lana');
 it(115,'Pluma');
 it(116,'Cuero');
 it(117,'Hilo');
@@ -435,6 +436,7 @@ const ingot=(c,hl)=>tool(g=>{g.fillStyle=c;g.fillRect(2,7,12,5);g.fillStyle=hl;g
 ICON[142]=ingot('#b8692e','#f0a868');ICON[143]=ingot('#d8a820','#fff0a0');
 ICON[144]=tool(g=>{for(let y=3;y<=13;y++){const hw=y<7?(y-2)*1.3:(13-y)*.95;g.fillStyle=y<7?'#7ae8f8':'#2ab8d0';g.fillRect(Math.round(8-hw),y,Math.round(hw*2)||1,1)}g.fillStyle='#fff';g.fillRect(6,5,2,1);g.fillRect(5,6,1,1)});
 ICON[145]=tunic('#2ab8d0','#d0ffff');
+ICON[146]=tool(g=>{disc(g,'#f4f4f0',5.5,9,3.2);disc(g,'#ffffff',9,7.5,3.4);disc(g,'#e4e4de',10.5,10.5,3);disc(g,'#ffffff',7,11,2.6);g.fillStyle='#c8c8c0';g.fillRect(6,12,3,1)});
 ICON[200]=tool(g=>{disc(g,'#c8962a',8,8,5.5);disc(g,'#ffd54a',8,8,4.3);g.fillStyle='#c8962a';g.fillRect(7,5,2,6);g.fillStyle='#fff6c0';g.fillRect(5,5,1,2)});
 IT[200]={id:200,name:'Monedas',stack:999};
 ICON[132]=tool(g=>{ell(g,'#f0ece0',8,8,5.5,4.5);ell(g,'#d8d2c0',8,8,2,1.6);g.fillStyle='#e33';g.fillRect(4,7,2,1);g.fillRect(4.5|0,6,1,3);g.fillStyle='#fff';g.fillRect(5,4,4,1)});
@@ -529,12 +531,15 @@ function setTile(x,y,t){if(y<0||y>=H)return;const c=chunkOf(x),lx=x-Math.floor(x
   if(bdmg.size)bdmg.delete(k);calcTop(c,lx);if(GROW.has(t))growing.add(k);else growing.delete(k)}
 // Descarga las franjas lejanas que nunca modificaste (se vuelven a crear iguales al regresar)
 function unloadFar(){const pcx=Math.floor(P.x/TS/CW);for(const[cx,c]of chunks)if(!c.mod&&Math.abs(cx-pcx)>8)chunks.delete(cx)}
-let spawn={x:0,y:0},worldSpawn={x:0,y:0},chests={};
+let spawn={x:0,y:0},worldSpawn={x:0,y:0},chests={},guide=null;
 function makeTree(x,base,R){const th=4+(R()*3|0),leaf=biomeAt(x)==='nieve'?B.SNOWLEAF:B.LEAF;for(let i=1;i<=th;i++){const v=T(x,base-i);if(v!==B.AIR&&v!==B.SAPLING&&v!==B.LEAF&&v!==B.SNOWLEAF)break;setTile(x,base-i,B.LOG)}const top=base-th;for(let dy=-2;dy<=1;dy++)for(let dx=-2;dx<=2;dx++){if(Math.abs(dx)+Math.abs(dy)>=4)continue;const X=x+dx,Y=top+dy;if(Y>=0&&T(X,Y)===B.AIR)setTile(X,Y,leaf)}}
 function dryColumn(x){for(let k=-2;k<=2;k++){const c=x+k,y=topAt(c);if(y>=SEA-2)return false;if(T(c,y-1)===B.WATER||T(c,y)===B.WATER)return false}
   const y=topAt(x);return T(x,y-1)!==B.WATER&&!BD[T(x,y-1)].solid&&!BD[T(x,y-2)].solid}
+// Anselmo, el guía de la historia: espera cerca del punto de inicio del mundo y no se mueve de ahí
+function initGuide(){let gx=Math.floor(worldSpawn.x/TS)+5;for(let d=0;d<30;d++){let ok=false;for(const x of[gx+d,gx-d])if(dryColumn(x)){gx=x;ok=true;break}if(ok)break}
+  guide={kind:'guide',name:'Anselmo',g:'m',x:gx*TS+2,y:topAt(gx)*TS-28,w:11,h:27,vx:0,vy:0,kb:0,on:false,face:-1,walk:0,hurt:0}}
 function findSpawn(){for(let d=0;d<400;d++){for(const x of[d,-d])if(dryColumn(x))return{x:x*TS+2,y:topAt(x)*TS-28}}return{x:2,y:Math.max(0,topAt(0)*TS-28)}}
-function gen(s){seed=s;chunks=new Map();growing.clear();chests={};bdmg=new Map();cloudDirty=new Set();worldSpawn=findSpawn();spawn={...worldSpawn}}
+function gen(s){seed=s;chunks=new Map();growing.clear();chests={};bdmg=new Map();cloudDirty=new Set();worldSpawn=findSpawn();spawn={...worldSpawn};initGuide()}
 
 // ---------- Estado ----------
 let P,inv,sel=0,mobs=[],drops=[],time=.05,day=1,rain=false,weatherT=100,wasNight=false;
@@ -687,7 +692,7 @@ function smart(dt,src,t){
   fresh=src.fresh;src.fresh=false;
   const s=inv[sel],sid=s?s.id:null,tl=sid!=null&&sid>=100?IT[sid]:null;
   if(src===ptr&&t)P.face=t.wx<pc().x?-1:1;
-  if(t&&t.npc){src.acted=true;if(fresh){flags.talked=1;openPanel('npc',t.npc)}return}
+  if(t&&t.npc){src.acted=true;if(fresh){flags.talked=1;if(t.npc.kind!=='guide')flags.talkedNpc=1;openPanel('npc',t.npc)}return}
   if(t&&t.mob){mine=null;src.acted=true;if(P.atkCd<=0)attack(t.mob,tl);return}
   const tt=t?T(t.tx,t.ty):B.AIR;
   if(t&&t.reach&&INTER.has(tt)){if(src.pressT>.3){src.acted=true;mineTile(dt,t.tx,t.ty,tl,false)}return}
@@ -764,6 +769,7 @@ function attack(m,tool_){
     const cx=m.x+m.w/2,cy=m.y+m.h/2;
     if(m.type==='pig')spawnDrop(101,1+(rnd()*2|0),cx,cy);
     if(m.type==='cow'){spawnDrop(101,1+(rnd()*3|0),cx,cy);const l=rnd()*3|0;if(l)spawnDrop(116,l,cx,cy)}
+    if(m.type==='sheep'){spawnDrop(101,1,cx,cy);spawnDrop(146,1+(rnd()*2|0),cx,cy);if(flags.qa&&qi===1)flags.sheepK=(flags.sheepK||0)+1}
     if(m.type==='chicken'){spawnDrop(101,1,cx,cy);spawnDrop(115,1+(rnd()*2|0),cx,cy)}
     if(m.type==='spider')spawnDrop(117,1+(rnd()*2|0),cx,cy);
     if(hostile(m)){coins+=2;feed(200,2)}
@@ -784,7 +790,7 @@ function eat(){
 }
 function damage(n,cause,raw){if(P.dead)return;P.hp-=raw?n:n*(1-armor())*(up('piel')?.8:1);P.hurt=.5;snd('hurt');if(P.hp<=0)die(cause)}
 function die(cause){P.hp=0;P.dead=true;P.fish=null;$('deadTxt').innerHTML=(cause?'Causa: <b>'+cause+'</b><br>':'')+'Sobreviviste '+day+' día'+(day>1?'s':'')+'. Conservas tu mochila.'+(spawn.bx!=null?'<br>Reaparecerás en tu cama.':'');$('dead').classList.remove('hidden');save()}
-$('respawn').addEventListener('click',()=>{$('dead').classList.add('hidden');const inv0=inv;if(spawn.bx!=null&&T(spawn.bx,spawn.by)!==B.BED)spawn={...worldSpawn};if(isWater(spawn.x+5,spawn.y+20))spawn=worldSpawn=findSpawn();newPlayer();inv=inv0;P.hu=70;P.th=70;mobs=mobs.filter(m=>!hostile(m));dirty()});
+$('respawn').addEventListener('click',()=>{$('dead').classList.add('hidden');const inv0=inv;if(spawn.bx!=null&&T(spawn.bx,spawn.by)!==B.BED)spawn={...worldSpawn};if(isWater(spawn.x+5,spawn.y+20))spawn=worldSpawn=findSpawn();initGuide();newPlayer();inv=inv0;P.hu=70;P.th=70;mobs=mobs.filter(m=>!hostile(m));dirty()});
 
 // ---------- Drops ----------
 function spawnDrop(id,n,x,y){drops.push({id,n,x,y,vx:(rnd()-.5)*1.5,vy:-2,age:0})}
@@ -796,7 +802,7 @@ function updDrops(dt){const c=pc();
     if(d.age>300)drops.splice(i,1)}}
 
 // ---------- Mobs ----------
-const MT={pig:{w:14,h:11,hp:10},chicken:{w:9,h:10,hp:5},cow:{w:16,h:13,hp:14},zombie:{w:11,h:27,hp:22},spider:{w:14,h:8,hp:12}};
+const MT={pig:{w:14,h:11,hp:10},chicken:{w:9,h:10,hp:5},cow:{w:16,h:13,hp:14},sheep:{w:14,h:11,hp:10},zombie:{w:11,h:27,hp:22},spider:{w:14,h:8,hp:12}};
 const hostile=m=>m.type==='zombie'||m.type==='spider';
 function addMob(type,tx,ty){const d=MT[type];const hl=type==='zombie'||type==='spider';const lv=hl?mobLvl():1;const mh=Math.round(d.hp*(1+.3*(lv-1)));const m={type,lvl:lv,maxHp:mh,dmul:1+.15*(lv-1),pathT:0,plan:null,breakT:0,w:d.w,h:d.h,hp:mh,x:tx*TS+(TS-d.w)/2,y:ty*TS-d.h-.5,vx:0,vy:0,kb:0,dir:0,t:0,hurt:0,flee:0,on:false,face:1,walk:0,hitCd:0};if(!boxHit(m.x,m.y,m.w,m.h)){mobs.push(m);return true}return false}
 function surfaceSpot(minD,maxD,needGrass){const ptx=P.x/TS|0;for(let k=0;k<6;k++){const d=minD+rnd()*(maxD-minD);const x=Math.round(ptx+(rnd()<.5?-d:d));const y=topAt(x);if(y<=2||y>=H-1)continue;const t=T(x,y);if(needGrass&&t!==B.GRASS)continue;if(T(x,y-1)===B.WATER)continue;return{x,y}}return null}
@@ -807,7 +813,7 @@ function spawner(){
   // Límites de monstruos (bajados: antes salían demasiados)
   let an=0,hos=0,sp=0;for(const m of mobs){if(hostile(m)){hos++;if(m.type==='spider')sp++}else an++}
   const maxHos=hordeActive?(day===1?4:6):3;
-  if(an<6&&rnd()<.15){const s=surfaceSpot(16,45,true);if(s){const r=rnd();addMob(r<.4?'pig':r<.7?'chicken':'cow',s.x,s.y)}}
+  if(an<6&&rnd()<.15){const s=surfaceSpot(16,45,true);if(s){const r=rnd();addMob(r<.28?'pig':r<.52?'chicken':r<.74?'cow':'sheep',s.x,s.y)}}
   if(night()&&hos<maxHos&&rnd()<(hordeActive?.3:.15)){const s=surfaceSpot(18,32,false);if(s)addMob(rnd()<.85?'zombie':'spider',s.x,s.y)}
   if(underground()&&sp<2&&hos<4&&rnd()<.05){const s=caveSpot();if(s)addMob('spider',s.x,s.y)}
 }
@@ -921,33 +927,72 @@ function regrow(){for(let k=0;k<4;k++){const x=Math.floor(P.x/TS)+((rnd()-.5)*80
 // ---------- Misiones ----------
 const NIGHT_T=.5+Math.asin(.08)/(2*Math.PI);
 function nightLeft(){if(night()||day>1)return'';const sec=Math.max(0,Math.round((NIGHT_T-time)*DAY));return` · faltan ${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')} para la noche`}
-// Misiones del tutorial, cada una con su recompensa (monedas y a veces objetos)
+// ---- Modo historia: las misiones las da Anselmo (el guía del inicio). Se aceptan hablando con él y se entregan con él ----
+// n: título · say: lo que dice al ofrecerla · done: lo que dice al entregarla · o: objetivos [texto, actual, meta] · ok: ¿cumplida? · take: objetos que entrega · r: recompensa
+const woodTool=()=>count(104)+count(105)+count(106)>0,swordAny=()=>count(107)+count(108)+count(109)>0;
 const QUESTS=[
- {t:'Tala 3 troncos: mantén el dedo sobre un tronco',p:()=>[Math.min(3,count(4)),3],ok:()=>count(4)>=3||flags.table||count(10)>=8,r:{c:5}},
- {t:'Abre la mochila, fabrica una mesa de trabajo y ponla en el suelo',ok:()=>flags.table,r:{c:5}},
- {t:'Junto a la mesa, fabrica un pico de madera',ok:()=>count(104)+count(105)+count(106)>0,r:{c:10}},
- {t:()=>'Construye tu refugio: un cuarto cerrado (paredes, piso y techo) con una puerta, y entra'+nightLeft(),ok:()=>flags.shelter,r:{c:20,i:[[14,4]]}},
- {t:()=>day===1&&!night()?'Prepárate: esta noche llegan los infectados'+nightLeft():'Sobrevive la noche: quédate en tu refugio con la puerta cerrada',ok:()=>day>=2,r:{c:25}},
- {t:'Haz una cama (tablones + 3 plumas de gallina) y ponla en tu refugio',ok:()=>flags.bed,r:{c:10}},
- {t:'Prepara una casa para un sobreviviente: otro cuarto cerrado con puerta, antorcha y cama',ok:()=>houses.some(h=>h.ok),r:{c:20}},
- {t:'Espera al sobreviviente y tócalo para hablar con él',ok:()=>flags.talked,r:{c:5}},
- {t:'Guarda comida en la despensa (botón de la casita, arriba)',ok:()=>pantry.some(s=>s),r:{c:10}},
- {t:'Gasta tus monedas: compra una mejora (casita de arriba → Mejoras)',ok:()=>flags.upg&&Object.keys(flags.upg).length>0,r:{c:10}},
- {t:'Pica 5 de piedra',p:()=>[Math.min(5,count(3)),5],ok:()=>count(3)>=5||count(105)>0,r:{c:10}},
- {t:'Funde hierro: horno + mineral de hierro + carbón',ok:()=>flags.ingot||count(110)>0,r:{c:20}},
- {t:'Ten 3 sobrevivientes viviendo en tu refugio',p:()=>[Math.min(3,npcs.length),3],ok:()=>npcs.length>=3,r:{c:50}},
- {t:'Siembra semillas, cosecha trigo y haz pan',ok:()=>flags.bread,r:{c:15}},
- {t:'Sobrevive 10 días',p:()=>[Math.min(10,day),10],ok:()=>day>=10,r:{c:100}},
+ {n:'Manos a la obra',say:'Menos mal que llegas. Aquí no se sobrevive con las manos vacías. Reúne madera, arma una mesa de trabajo y fabrica una espada y un pico. Con eso ya podrás defenderte y picar piedra.',done:'Mira nada más, ya tienes con qué defenderte. Esto te lo mereces.',
+  o:()=>[['Reunir 4 troncos',flags.wood?4:Math.min(4,count(4)),4],['Fabricar y poner una mesa de trabajo',flags.table?1:0,1],['Fabricar una espada',flags.sw?1:0,1],['Fabricar un pico',flags.pk?1:0,1]],
+  ok:()=>(flags.wood||count(4)>=4||flags.table)&&flags.table&&flags.sw&&flags.pk,r:{c:30,xp:60,i:[[14,4],[102,2]]}},
+ {n:'Lana para el invierno',say:'Se acerca el frío y no tengo con qué abrigarme. En la pradera hay ovejas: cázalas y tráeme 3 de lana. Te lo pagaré bien.',done:'¡Qué suave! Con esto pasaremos el invierno. Toma, es tuyo.',
+  o:()=>[['Cazar ovejas',Math.min(3,flags.sheepK||0),3],['Reunir lana',Math.min(3,count(146)),3]],ok:()=>(flags.sheepK||0)>=3&&count(146)>=3,take:[[146,3]],r:{c:40,xp:80,i:[[120,3]]}},
+ {n:'Un techo',say:'Cuando cae la noche salen los infectados. Construye un cuarto cerrado (paredes, piso y techo) con una puerta, y entra. Si lo logras antes del anochecer, mejor.',done:'Ese techo te va a salvar la vida.',
+  o:()=>[['Entrar a un refugio cerrado con puerta'+nightLeft(),flags.shelter?1:0,1]],ok:()=>flags.shelter,r:{c:20,i:[[14,4]]}},
+ {n:'La primera noche',say:'Esta noche vienen los infectados. Quédate en tu refugio con la puerta cerrada hasta que amanezca.',done:'Sigues vivo. No todos pueden decir lo mismo.',
+  o:()=>[[day===1&&!night()?'Prepararte: esta noche llegan los infectados'+nightLeft():'Sobrevivir la noche en tu refugio',day>=2?1:0,1]],ok:()=>day>=2,r:{c:25}},
+ {n:'Un lugar para dormir',say:'Un buen descanso vale oro. Fabrica una cama (tablones + 3 plumas de gallina) y ponla en tu refugio.',done:'Ahora sí, reaparecerás aquí.',
+  o:()=>[['Poner una cama en tu refugio',flags.bed?1:0,1]],ok:()=>flags.bed,r:{c:10}},
+ {n:'Casa para un vecino',say:'Solos no duramos. Prepara otra casa: un cuarto cerrado con puerta, antorcha y cama. Vendrá alguien a vivir.',done:'Buena casa. Ya verás quién llega.',
+  o:()=>[['Preparar una casa para un sobreviviente',houses.some(h=>h.ok)?1:0,1]],ok:()=>houses.some(h=>h.ok),r:{c:20}},
+ {n:'Nuevos vecinos',say:'Cuando llegue alguien a tu refugio, acércate a hablar con él.',done:'Es bueno tener compañía.',
+  o:()=>[['Hablar con un sobreviviente de tu refugio',npcs.some(()=>flags.talkedNpc)?1:0,1]],ok:()=>npcs.length>0&&flags.talkedNpc,r:{c:5}},
+ {n:'La despensa',say:'Los vecinos comen una vez al día. Guarda comida en la despensa (botón de la casita, arriba).',done:'Barriga llena, corazón contento.',
+  o:()=>[['Guardar comida en la despensa',pantry.some(s=>s)?1:0,1]],ok:()=>pantry.some(s=>s),r:{c:10}},
+ {n:'Gasto inteligente',say:'Las monedas no sirven guardadas. Compra una mejora para tu refugio (casita de arriba → Mejoras).',done:'Buena inversión.',
+  o:()=>[['Comprar una mejora',flags.upg&&Object.keys(flags.upg).length>0?1:0,1]],ok:()=>flags.upg&&Object.keys(flags.upg).length>0,r:{c:10}},
+ {n:'Cantera',say:'Necesitamos piedra: pica 5 bloques. Con ella tendrás mejores herramientas.',done:'Buen trabajo, la piedra siempre hace falta.',
+  o:()=>[['Reunir piedra',Math.min(5,count(3)),5]],ok:()=>count(3)>=5||count(105)>0,r:{c:10}},
+ {n:'El hierro',say:'Para ir más lejos necesitas hierro. Construye un horno y funde un lingote (mineral de hierro + carbón).',done:'El hierro cambia las reglas del juego.',
+  o:()=>[['Fundir un lingote de hierro',flags.ingot||count(110)>0?1:0,1]],ok:()=>flags.ingot||count(110)>0,r:{c:20}},
+ {n:'Una comunidad',say:'Un refugio de verdad necesita gente. Consigue que vivan 3 sobrevivientes en él.',done:'Ya parece un pueblo.',
+  o:()=>[['Tener sobrevivientes viviendo en tu refugio',Math.min(3,npcs.length),3]],ok:()=>npcs.length>=3,r:{c:50}},
+ {n:'Del campo a la mesa',say:'Siembra semillas, cosecha trigo y haz pan. Eso sí es vivir bien.',done:'Pan caliente. Eres de los míos.',
+  o:()=>[['Hacer pan con trigo cosechado',flags.bread?1:0,1]],ok:()=>flags.bread,r:{c:15}},
+ {n:'Superviviente',say:'Último reto: sobrevive 10 días. Si llegas, serás una leyenda.',done:'Diez días. Eres una leyenda. Gracias por todo.',
+  o:()=>[['Sobrevivir 10 días',Math.min(10,day),10]],ok:()=>day>=10,r:{c:100}},
 ];
+const qXp=r=>r.xp!=null?r.xp:(r.c||0)*2;
 let qKey='';
+function qRewardHTML(r){return`<img src="${iconURL(200)}" alt="">${r.c||0} · ${qXp(r)} XP`+(r.i||[]).map(([id,n])=>` · <img src="${iconURL(id)}" alt="">${n}`).join('')}
+function questState(){if(qi>=QUESTS.length)return'end';const q=QUESTS[qi];return!flags.qa?'offer':q.ok()?'ready':'busy'}
+function acceptQuest(){if(questState()!=='offer')return;flags.qa=1;if(qi===1)flags.sheepK=0;snd('craft');toast('Misión aceptada: '+QUESTS[qi].n,2.5,133);qKey='';questTick()}
+function turnInQuest(){if(questState()!=='ready')return;const q=QUESTS[qi],r=q.r||{};
+  for(const[id,n]of(q.take||[]))removeItem(id,n);
+  if(r.c){coins+=r.c;feed(200,r.c)}(r.i||[]).forEach(([id,n])=>{const left=addItem(id,n);if(left)spawnDrop(id,left,P.x,P.y);feed(id,n)});
+  gainXp(qXp(r));qi++;flags.qa=0;qKey='';snd('craft');toast(`¡Misión cumplida! +${r.c||0} monedas · +${qXp(r)} XP`,3.5,200);questTick()}
 function questTick(){
-  while(qi<QUESTS.length&&QUESTS[qi].ok()){const r=QUESTS[qi].r||{};qi++;snd('craft');
-    if(r.c){coins+=r.c;feed(200,r.c)}(r.i||[]).forEach(([id,n])=>{const left=addItem(id,n);if(left)spawnDrop(id,left,P.x,P.y);feed(id,n)});
-    toast(qi<QUESTS.length?`¡Misión cumplida! +${r.c||0} monedas`:'¡Completaste todas las misiones!',3,200)}
-  const e=$('quest');if(qi>=QUESTS.length){e.classList.add('hidden');return}
-  const q=QUESTS[qi],pr=q.p?q.p():null,txt=typeof q.t==='function'?q.t():q.t,key=qi+':'+(pr?pr[0]:'')+txt;if(key===qKey)return;qKey=key;
-  $('qT').textContent=txt+(pr?` (${pr[0]}/${pr[1]})`:'');$('qN').textContent=`${qi+1}/${QUESTS.length}`;$('qMn').textContent=`${qi+1}/${QUESTS.length}`+(pr?` · ${pr[0]}/${pr[1]}`:'');$('qMb').style.width=(pr?pr[0]/pr[1]*100:0)+'%';$('qP').classList.toggle('hidden',!pr);if(pr)$('qB').style.width=(pr[0]/pr[1]*100)+'%';
-  const r=q.r||{};$('qR').innerHTML=`Recompensa: <img src="${iconURL(200)}" alt="">${r.c||0}`+(r.i||[]).map(([id,n])=>` + <img src="${iconURL(id)}" alt="">${n}`).join('')}
+  if(woodTool())flags.pk=1;if(swordAny())flags.sw=1;if(count(4)>=4)flags.wood=1;
+  const e=$('quest'),st=questState();e.classList.toggle('hidden',st==='end'||st==='offer');if(st==='end'||st==='offer')return;
+  const q=QUESTS[qi],ob=q.o(),ready=st==='ready',nx=ob.find(([,c,m])=>c<m)||ob[ob.length-1],txt=ready?'¡Lista! Vuelve con Anselmo para entregarla':nx[0]+(nx[2]>1?` (${nx[1]}/${nx[2]})`:'');
+  const tot=ob.reduce((a,o)=>a+o[2],0),cur=ob.reduce((a,o)=>a+Math.min(o[1],o[2]),0),pc_=Math.round(cur/tot*100),key=qi+':'+txt+':'+pc_;if(key===qKey)return;qKey=key;
+  $('qT').textContent=txt;$('qN').textContent=`${qi+1}/${QUESTS.length} · ${q.n}`;$('qMn').textContent=ready?'¡Entregar!':`${qi+1}/${QUESTS.length}`+(nx[2]>1?` · ${nx[1]}/${nx[2]}`:'');$('qMb').style.width=pc_+'%';$('qP').classList.remove('hidden');$('qB').style.width=pc_+'%';
+  $('qR').innerHTML='Recompensa: '+qRewardHTML(q.r||{})}
+function renderGuide(win){const st=questState(),q=QUESTS[qi];let body;
+  if(st==='end')body=`<div class="sub">“Ya no tengo más que pedirte. Has hecho más por este lugar que nadie. Por ahora, la historia sigue en tus manos.”</div>`;
+  else{const ob=q.o();
+    const list=`<div class="lbl">OBJETIVOS</div>${ob.map(([t,c,m])=>`<div class="rc"><div class="t"><b>${c>=m?'✓ ':''}${t}</b>${m>1?`<small>${Math.min(c,m)}/${m}</small>`:''}</div></div>`).join('')}<div class="lbl">RECOMPENSA</div><div class="stations"><div class="stn on">${qRewardHTML(q.r||{})}</div></div>`;
+    body=`<div class="lbl">MISIÓN ${qi+1}/${QUESTS.length} · ${q.n.toUpperCase()}</div><div class="sub" style="margin-top:0">“${st==='ready'?q.done:q.say}”</div>${list}`
+      +(st==='offer'?'<button class="btn" data-qa style="margin-top:10px">Aceptar misión</button>':st==='ready'?'<button class="btn" data-qt style="margin-top:10px">Entregar misión</button>':'<div class="sub" style="margin-top:10px">Aún no terminas. Vuelve cuando lo tengas.</div>')}
+  win.innerHTML=head('Anselmo',iconURL(133))+`<div class="wbody"><div class="info" style="margin-bottom:8px"><img src="${iconURL(133)}" alt=""><div><b>Anselmo, el guía</b><div class="sub" style="margin:2px 0 0">Lleva años sobreviviendo aquí.</div></div></div>${body}</div>`}
+function drawGuide(){const n=guide,X=Math.round(n.x),Y=Math.round(n.y),f=n.face;
+  const g=n.on&&Math.abs(n.vx)>.1?Math.round(Math.sin(n.walk)*2):0,skin='#d8a878';
+  const parts=[[2+g,19,3,8,'#3a3030'],[6-g,19,3,8,'#2a2424'],[0,10,11,10,'#3a5f8f'],[0,10,11,2,'#e8d8a0'],[1,18,9,1,'#2a2a2a'],[1,1,9,9,skin],[0,0,11,3,'#e4e4ea'],[0,3,2,8,'#e4e4ea'],[3,8,6,3,'#e4e4ea'],[7,4,2,2,'#1b1b1b'],[7,4,1,1,'#fff'],[5,12,5,3,skin]];
+  sprite(X,Y,n.w,f,parts);
+  ctx.save();ctx.translate(X+(f>0?10:1),Y+27);ctx.scale(f,1);ctx.fillStyle='#7a4e26';ctx.fillRect(0,-24,2,24);ctx.fillStyle='#d8b84a';ctx.fillRect(-1,-27,4,4);ctx.restore();
+  ctx.font='6px "Pixelify Sans",system-ui';ctx.textAlign='center';ctx.lineWidth=2;ctx.strokeStyle='rgba(0,0,0,.85)';ctx.strokeText(n.name,X+n.w/2,Y-3);ctx.fillStyle='#fff';ctx.fillText(n.name,X+n.w/2,Y-3);
+  const st=questState(),mark=st==='offer'?['!','#ffd54a']:st==='ready'?['?','#7CFC8A']:null;
+  if(mark){const bob=Math.sin(clockT*5)*1.5;ctx.font='bold 10px "Pixelify Sans",system-ui';ctx.strokeText(mark[0],X+n.w/2,Y-11+bob);ctx.fillStyle=mark[1];ctx.fillText(mark[0],X+n.w/2,Y-11+bob)}}
+function updGuide(dt){if(!guide)return;guide.hurt=0;if(!onScreen(guide))return;guide.vx=0;const dx=(P.x+P.w/2)-(guide.x+guide.w/2);if(Math.abs(dx)<10*TS)guide.face=dx<0?-1:1;phys(guide,true)}
 
 // ---------- Refugio: casas, sobrevivientes, despensa, monedas ----------
 let coins=0,npcs=[],pantry=new Array(12).fill(null),houses=[],arriveCd=0,villageT=0,shelterT=0,inShelter=false,hordeActive=false,npcRef=null,vilTab='res';
@@ -985,7 +1030,7 @@ const roleName=n=>n.g==='f'?ROLES[n.role].f:ROLES[n.role].n;
 const maxPop=()=>up('casas')?12:8;
 // Tienda del comerciante: [objeto, cantidad, precio]. Todo se gana jugando: no hay compras con dinero real.
 const BUY=[[132,2,8],[133,1,15],[118,3,5],[14,4,8],[120,1,6],[102,2,8],[116,2,8],[110,1,12],[113,1,10],[105,1,25],[130,1,25],[127,1,20],[124,1,45],[106,1,60]];
-const SELL={26:2,27:6,142:4,143:15,144:30,4:1,10:1,3:1,111:2,9:4,110:6,101:1,102:3,103:1,112:1,119:2,120:4,121:1,122:3,115:1,116:3,117:2};
+const SELL={146:3,26:2,27:6,142:4,143:15,144:30,4:1,10:1,3:1,111:2,9:4,110:6,101:1,102:3,103:1,112:1,119:2,120:4,121:1,122:3,115:1,116:3,117:2};
 // Busca un cuarto cerrado alrededor de (x,y). Las puertas cuentan como pared.
 function roomAt(x,y){const MAXR=90;if(y<0||y>=H)return null;if(BD[T(x,y)].solid)return null;
   const seen=new Set(),q=[x,y];let n=0,door=false,light=false,beds=0,key=Infinity;
@@ -1053,7 +1098,7 @@ function updNpcs(dt){const nt=night();
     phys(n,true);if(n.on&&Math.abs(n.vx)>.1)n.walk+=dt*12;
     n.hp=Math.min(40,n.hp+dt*.4);
     if(n.hp<=0)npcDie(n)}}
-function npcAt(wx,wy){const c=pc();for(const n of npcs){if(wx>=n.x-4&&wx<=n.x+n.w+4&&wy>=n.y-4&&wy<=n.y+n.h+4&&Math.hypot(n.x+n.w/2-c.x,n.y+n.h/2-c.y)<=REACH+30)return n}return null}
+function npcAt(wx,wy){const c=pc();for(const n of guide?[...npcs,guide]:npcs){if(wx>=n.x-4&&wx<=n.x+n.w+4&&wy>=n.y-4&&wy<=n.y+n.h+4&&Math.hypot(n.x+n.w/2-c.x,n.y+n.h/2-c.y)<=REACH+30)return n}return null}
 const moodWord=m=>m>=75?'Feliz':m>=45?'Tranquilo':m>=20?'Preocupado':'Muy triste';
 function npcLine(n){if(!npcHouse(n))return'No tengo dónde dormir. Necesito un cuarto cerrado con puerta, luz y una cama.';
   if(n.hungry)return'Tengo hambre… ¿puedes guardar comida en la despensa?';if(n.stock.some(s=>s))return'Te guardé lo que reuní. ¡Llévatelo!';return ROLES[n.role].line}
@@ -1090,7 +1135,7 @@ function renderVillage(win){
     <div class="sub" style="margin-top:10px">Cada amanecer, cada sobreviviente con casa y comida aporta monedas y reúne recursos según su oficio. Las monedas solo se ganan jugando.</div></div>`}
 const REPAIR=[4,7,10,15,30];
 const repairCost=s=>{const[d,mx]=durOf(s);return Math.max(1,Math.ceil((1-d/mx)*REPAIR[IT[s.id].tier]))};
-function renderNpc(win){const n=npcRef;if(!n||!npcs.includes(n)){win.innerHTML=head('Sobreviviente',HOUSE)+'<div class="wbody">Ya no está.</div>';return}
+function renderNpc(win){const n=npcRef;if(n&&n.kind==='guide'){renderGuide(win);return}if(!n||!npcs.includes(n)){win.innerHTML=head('Sobreviviente',HOUSE)+'<div class="wbody">Ya no está.</div>';return}
   const R=ROLES[n.role],h=npcHouse(n);
   let shop='';
   if(n.role==='comerciante'){
@@ -1223,6 +1268,8 @@ $('win').addEventListener('click',e=>{
   if(e.target.closest('[data-vil]')){panelMode='village';vilTab='res';renderPanel();return}
   const np=e.target.closest('[data-npc]');if(np){npcRef=npcs[+np.dataset.npc];panelMode='npc';snd('click');renderPanel();return}
   if(e.target.closest('[data-collect]')&&npcRef){let got=0;npcRef.stock.forEach((st,i)=>{if(!st)return;const left=addItem(st.id,st.n);if(st.n-left)feed(st.id,st.n-left);got+=st.n-left;npcRef.stock[i]=left?{id:st.id,n:left}:null});if(got){snd('pick');npcRef.morale=Math.min(100,npcRef.morale+2)}else toast('Mochila llena',1.5);renderPanel();return}
+  if(e.target.closest('[data-qa]')){acceptQuest();renderPanel();return}
+  if(e.target.closest('[data-qt]')){turnInQuest();renderPanel();return}
   const by=e.target.closest('[data-buy]');if(by){const[id,k,pr]=BUY[+by.dataset.buy];if(coins<pr)return;const left=addItem(id,k);if(left===k){toast('Mochila llena',1.5);return}coins-=pr;feed(id,k-left);snd('craft');renderPanel();return}
   const rp=e.target.closest('[data-rep]');if(rp){const s=inv[+rp.dataset.rep];if(s){const c=repairCost(s);if(coins>=c){coins-=c;s.d=IT[s.id].dur;snd('craft');toast('Reparado como nuevo',1.8,s.id);dirty()}}renderPanel();return}
   const sl=e.target.closest('[data-sell]');if(sl){const id=+sl.dataset.sell,k=sl.dataset.k==='all'?count(id):1;if(!k)return;removeItem(id,k);coins+=SELL[id]*k;feed(200,SELL[id]*k);snd('pick');renderPanel();return}
@@ -1262,7 +1309,7 @@ $('bHelp').addEventListener('click',()=>{helpOpen=true;$('help').classList.remov
 $('hGo').addEventListener('click',()=>{closeHelp();grabFocus()});
 $('focusHint').addEventListener('mousedown',e=>{e.preventDefault();grabFocus();$('focusHint').classList.add('hidden')});$('hX').addEventListener('click',closeHelp);
 $('rotOk').addEventListener('click',()=>{rotDismiss=true;checkRotate()});
-function newWorld(){gen((rnd()*1e9)|0);newPlayer();inv=new Array(24).fill(null);addItem(103,3);mobs=[];drops=[];time=.05;day=1;rain=false;weatherT=100;warned={};flags={};qi=0;qKey='';coins=0;prog={lvl:1,xp:0,sp:0,sk:{}};bdmg=new Map();floats=[];npcs=[];pantry=new Array(12).fill(null);houses=[];arriveCd=0;hordeActive=false;sel=0;cam.x=P.x-VW/2;cam.y=P.y-VH/2;$('quest').classList.remove('hidden');dirty()}
+function newWorld(){gen((rnd()*1e9)|0);newPlayer();inv=new Array(24).fill(null);addItem(103,3);mobs=[];drops=[];time=.05;day=1;rain=false;weatherT=100;warned={};flags={story:1};qi=0;qKey='';coins=0;prog={lvl:1,xp:0,sp:0,sk:{}};bdmg=new Map();floats=[];npcs=[];pantry=new Array(12).fill(null);houses=[];arriveCd=0;hordeActive=false;sel=0;cam.x=P.x-VW/2;cam.y=P.y-VH/2;dirty()}
 
 // HUD con corazones, comida y gotas
 function buildPips(id){$(id).innerHTML='<i></i>'.repeat(10)}
@@ -1304,8 +1351,8 @@ function loadFrom(raw){try{const j=JSON.parse(raw);if(!j||j.v!==4||j.seed==null)
   cloudDirty=new Set();
   spawn=j.spawn;worldSpawn=j.worldSpawn||j.spawn;
   if(isWater(worldSpawn.x+5,worldSpawn.y+20)){worldSpawn=findSpawn();if(spawn.bx==null)spawn={...worldSpawn}}
-  prog=j.prog||{lvl:1,xp:0,sp:0,sk:{}};newPlayer();Object.assign(P,j.P);if(P.hp<=0)P.hp=50;inv=j.inv;time=j.time;day=j.day;sel=j.sel||0;warned=j.warned||{};flags=j.flags||{};qi=j.qi||0;chests=j.chests||{};coins=j.coins||0;pantry=j.pantry||new Array(12).fill(null);
-  npcs=(j.npcs||[]).map(o=>Object.assign(newNpc(o.role,{bx:o.home.bx,by:o.home.by},o.x,o.y),o,{arriving:false}));scanHouses();return true}catch(e){console.error(e);return false}}
+  prog=j.prog||{lvl:1,xp:0,sp:0,sk:{}};newPlayer();Object.assign(P,j.P);if(P.hp<=0)P.hp=50;inv=j.inv;time=j.time;day=j.day;sel=j.sel||0;warned=j.warned||{};flags=j.flags||{};qi=j.qi||0;chests=j.chests||{};if(!flags.story){flags.story=1;flags.qa=0;qi=qi<3?0:qi-1;if(flags.talked)flags.talkedNpc=1}coins=j.coins||0;pantry=j.pantry||new Array(12).fill(null);
+  initGuide();npcs=(j.npcs||[]).map(o=>Object.assign(newNpc(o.role,{bx:o.home.bx,by:o.home.by},o.x,o.y),o,{arriving:false}));scanHouses();return true}catch(e){console.error(e);return false}}
 addEventListener('visibilitychange',()=>{if(document.hidden)save(true)});addEventListener('pagehide',()=>save(true));
 // ---------- Guardado en tu cuenta (sirve entre iPhone, iPad y Mac) ----------
 let cloudDoc=null,cloudBusy=false,cloudPending=false,cloudAt=0,cloudState='off';
@@ -1317,7 +1364,7 @@ function cloudPush(force){if(!cloudDoc||!lastStateStr)return;if(!force&&Date.now
     await cloudDoc.set({json:str,savedAt:at,day,lvl:prog.lvl,v:4});cloudAt=Date.now();cloudState='ok'
   }catch(e){dirty.forEach(cx=>cloudDirty.add(cx));cloudState=e&&e.code==='quota_exceeded'?'full':'err'}
   finally{cloudBusy=false;if(cloudPending){cloudPending=false;cloudPush(true)}}})()}
-function afterLoad(){cam.x=P.x-VW/2;cam.y=P.y-VH/2;qKey='';setQuestMin(flags.qmin);$('quest').classList.toggle('hidden',qi>=QUESTS.length);helpOpen=false;$('help').classList.add('hidden');dirty()}
+function afterLoad(){cam.x=P.x-VW/2;cam.y=P.y-VH/2;qKey='';setQuestMin(flags.qmin);helpOpen=false;$('help').classList.add('hidden');dirty()}
 function ago(t){if(!t)return'nunca';const m=Math.round((Date.now()-t)/60000);return m<1?'hace un momento':m<60?`hace ${m} min`:m<1440?`hace ${Math.round(m/60)} h`:`hace ${Math.round(m/1440)} día(s)`}
 function choose(title,a,b){return new Promise(res=>{const o=$('choice');$('chT').textContent=title;$('chA').innerHTML=a;$('chB').innerHTML=b;o.classList.remove('hidden');
   const done=v=>{o.classList.add('hidden');$('chA').onclick=$('chB').onclick=null;res(v)};$('chA').onclick=()=>done('a');$('chB').onclick=()=>done('b')})}
@@ -1354,7 +1401,7 @@ function tick(dt){
   if(sleepT>0){const before=sleepT;sleepT-=dt;if(before>.8&&sleepT<=.8){time=.01;day++;mobs=mobs.filter(m=>!hostile(m));P.hu=Math.max(0,P.hu-10);P.th=Math.max(0,P.th-10);P.hp=Math.min(maxHp(),P.hp+30);toast('¡Buenos días! Día '+day,2.5);hordeActive=false;newDay()}return}
   time+=dt/DAY;if(time>=1){time-=1;day++;hordeActive=false;toast('Día '+day+': ¡sobreviviste la noche!',3);newDay()}
   const n=night();if(n&&!wasNight){hordeActive=isHordeNight();toast(hordeActive?(day===1?'¡Primera noche! Llegan los infectados. Entra a tu refugio y cierra la puerta':'¡Horda! Los infectados atacan el refugio'):'Cae la noche y salen los infectados. ¡Refúgiate!',4)}if(!n&&wasNight)hordeActive=false;wasNight=n;
-  weather(dt);updPlayer(dt);handleSrc(ptr,ptrTarget,dt);if(abt.down&&!actTool())releaseAbt();handleSrc(abt,frontTarget,dt);villageTick(dt);updNpcs(dt);stats(dt);updMobs(dt);updDrops(dt);
+  weather(dt);updPlayer(dt);handleSrc(ptr,ptrTarget,dt);if(abt.down&&!actTool())releaseAbt();handleSrc(abt,frontTarget,dt);villageTick(dt);updNpcs(dt);updGuide(dt);stats(dt);updMobs(dt);updDrops(dt);
   if((spawnT-=dt)<=0){spawnT=1;spawner();questTick()}
   if((growT-=dt)<=0){growT=1;grow()}
   if((regrowT-=dt)<=0){regrowT=15;regrow()}
@@ -1404,6 +1451,7 @@ function render(){
   for(const d of drops){const bob=Math.sin(clockT*4+d.x)*1.2;ctx.drawImage(icon(d.id),Math.round(d.x),Math.round(d.y+bob),10,10)}
   for(const m of mobs)drawMob(m);
   for(const n of npcs)drawNpc(n);
+  if(guide)drawGuide();
   if(!P.dead)drawPlayer();
   ctx.textAlign='center';ctx.lineWidth=2;for(const f of floats){ctx.globalAlpha=Math.min(1,f.t*2);ctx.font='bold 7px "Pixelify Sans",system-ui';ctx.strokeStyle='rgba(0,0,0,.9)';ctx.strokeText(f.txt,f.x,f.y);ctx.fillStyle=f.c;ctx.fillText(f.txt,f.x,f.y)}ctx.globalAlpha=1;
   if(P.fish){const hx=P.x+(P.face>0?P.w+6:-6),hy=P.y+4;ctx.strokeStyle='rgba(240,240,240,.8)';ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(hx,hy);ctx.quadraticCurveTo((hx+P.fish.x)/2,Math.max(hy,P.fish.y)+6,P.fish.x,P.fish.y);ctx.stroke();ctx.fillStyle='#e33';ctx.fillRect(P.fish.x-1.5,P.fish.y-1+Math.sin(clockT*5),3,3)}
@@ -1453,6 +1501,7 @@ function drawMob(m){
   if(m.type==='pig')parts=[[1+g,8,2,3,'#d98a92'],[4-g,8,2,3,'#d98a92'],[8+g,8,2,3,'#d98a92'],[11-g,8,2,3,'#d98a92'],[0,2,11,7,'#f2a6ae'],[0,7,11,2,'#e0909a'],[9,0,5,7,'#f5b3ba'],[12,3,2,3,'#e07f8c'],[11,1,1,1,'#222'],[0,3,1,1,'#e07f8c']];
   else if(m.type==='chicken')parts=[[3+g,8,1,2,'#e8a33a'],[5-g,8,1,2,'#e8a33a'],[0,3,7,5,'#f4f4f0'],[1,4,3,3,'#d8d8cf'],[5,0,4,4,'#fafaf6'],[6,-1,2,1,'#d62828'],[9,1,1,1,'#f0b030'],[7,1,1,1,'#111'],[8,3,1,1,'#d62828']];
   else if(m.type==='cow')parts=[[1+g,9,2,4,'#3a2a20'],[4-g,9,2,4,'#3a2a20'],[9+g,9,2,4,'#3a2a20'],[12-g,9,2,4,'#3a2a20'],[0,2,13,8,'#f2f2ee'],[3,3,3,3,'#2a2a2a'],[8,5,3,3,'#2a2a2a'],[1,7,2,2,'#2a2a2a'],[12,0,4,7,'#e8e8e2'],[14,4,2,3,'#e8a0a0'],[12,-1,1,1,'#ddd'],[15,-1,1,1,'#ddd'],[14,1,1,1,'#111']];
+  else if(m.type==='sheep')parts=[[2+g,9,2,3,'#3a3a3a'],[5-g,9,2,3,'#3a3a3a'],[8+g,9,2,3,'#3a3a3a'],[11-g,9,2,3,'#3a3a3a'],[0,2,12,8,'#f6f6f2'],[1,1,10,3,'#ffffff'],[2,5,3,3,'#e4e4de'],[8,6,3,3,'#e4e4de'],[10,2,4,6,'#4a4a4a'],[12,3,1,1,'#fff'],[13,5,1,2,'#6a6a6a'],[10,1,2,2,'#f6f6f2']];
   else if(m.type==='spider'){parts=[];for(let k=0;k<4;k++){parts.push([1+k*3+(k%2?-g:g),6,1,2,'#1a1a1a'],[k*3+(k%2?g:-g),0,1,2,'#1a1a1a'])}parts.push([0,1,8,6,'#2a2a2a'],[8,2,6,5,'#3a3a3a'],[11,3,2,1,'#ff3b30'],[12,5,1,1,'#ff3b30'],[9,4,1,1,'#ff3b30'])}
   else parts=[[2+g,19,3,8,'#3b2f5b'],[6-g,19,3,8,'#33284f'],[1,10,9,10,'#3d6fb5'],[1,17,3,2,'#6aa84f'],[1,1,9,9,'#6aa84f'],[1,0,9,2,'#4f8a3a'],[6,4,2,2,'#2a0c0c'],[5,7,4,1,'#2d4a22'],[5,12,8,3,'#6aa84f']];
   sprite(X,Y,m.w,f,parts);
@@ -1470,8 +1519,7 @@ if(!load()){first=true;newWorld()}
 setTimeout(cloudInit,0);
 cam.x=P.x-VW/2;cam.y=P.y-VH/2;
 if(first){helpOpen=true;$('help').classList.remove('hidden')}
-if(qi>=QUESTS.length)$('quest').classList.add('hidden');
-updModeBtn();setQuestMin(flags.qmin);
+updModeBtn();setQuestMin(flags.qmin);questTick();
 let last=performance.now(),acc=0;
 function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;acc+=dt;while(acc>=1/60){tick(1/60);acc-=1/60}render();hud();requestAnimationFrame(frame)}
 requestAnimationFrame(frame);

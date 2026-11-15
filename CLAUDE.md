@@ -18,6 +18,7 @@ Quiere código completo y listo para usar, y opiniones honestas (señala fallos,
 - IA: `planPath` (BFS); los zombis rompen paredes y puertas desde el día 2 (`hitBlock`, `BHP`); las arañas trepan.
   - Límite de hostiles: 3 normalmente; en hordas 4 el día 1 y 6 después.
 - Progresión: XP, niveles y habilidades (`prog`), nivel de mobs (`mobLvl`) con barras de vida, durabilidad (`wear`), reparación en el mercader.
+- Modo historia: Anselmo (`guide`, `initGuide`, `drawGuide`) espera cerca del spawn. Las misiones (`QUESTS`) se aceptan y se entregan hablando con él (`questState`, `acceptQuest`, `turnInQuest`, `renderGuide`); `flags.qa` = misión aceptada, `qi` = índice. Recompensa: monedas, XP y objetos. `#quest` solo es un rastreador de la misión activa. Misión 1: mesa+espada+pico; misión 2: 3 ovejas (`sheep`) y 3 de lana (id 146). Los guardados antiguos se migran en `loadFrom` (`flags.story`).
 - Refugio estilo "Asylum": NPC con roles, despensa, economía diaria (`newDay`), mejoras `UPG` y 15 misiones (`QUESTS`) con recompensas.
 - Controles táctiles:
   - Un toque mina o usa.
