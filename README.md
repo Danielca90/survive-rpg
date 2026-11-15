@@ -4,6 +4,8 @@ Juego de supervivencia sandbox 2D en vista lateral, en un solo archivo HTML (can
 Pensado para iPhone en horizontal; también funciona en iPad y Mac.
 
 ## Jugar
+**En línea:** https://danielca90.github.io/survive-rpg/
+
 Abre `index.html` en el navegador, o sírvelo localmente:
 
 ```bash
