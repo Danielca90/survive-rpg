@@ -1,13 +1,2 @@
-# build output
-build/
-.gradle/
-*.class
-out/
-
-# macOS / editors
 .DS_Store
-.idea/
-*.iml
-.vscode/
-
-# local saves and texture overrides live in ~/.tallgrass, never in the repo
+node_modules/
