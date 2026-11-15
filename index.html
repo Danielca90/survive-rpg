@@ -103,7 +103,9 @@ img{image-rendering:pixelated;-webkit-user-drag:none;pointer-events:none}
 .tm{font-family:var(--ui);text-align:left;color:#f6e6c6;border:0;border-left:3px solid #ff9a3c;padding:10px 18px 10px 16px;cursor:pointer;position:relative;display:block;
   background:linear-gradient(90deg,rgba(255,140,50,.20),rgba(30,12,40,.55) 70%,rgba(30,12,40,.15));clip-path:polygon(0 0,100% 0,calc(100% - 16px) 100%,0 100%);
   transition:transform .15s,background .15s;animation:tin .5s both;-webkit-tap-highlight-color:transparent}
-.tm:nth-child(2){animation-delay:.07s}.tm:nth-child(3){animation-delay:.14s}.tm:nth-child(4){animation-delay:.21s}
+.tm:nth-child(2){animation-delay:.07s}.tm:nth-child(3){animation-delay:.14s}.tm:nth-child(4){animation-delay:.21s}.tm:nth-child(5){animation-delay:.28s}
+.tm.new .l::after{content:' ●';color:#7CFC8A;text-shadow:0 0 8px #7CFC8A}
+@media (max-height:430px){.tmenu{gap:6px}.tm{padding-top:7px;padding-bottom:7px}}
 .tm .l{display:block;font-size:clamp(16px,2.8vw,22px);font-weight:700;letter-spacing:.06em}
 .tm small{display:block;font-size:clamp(10px,1.6vw,12.5px);opacity:.7;margin-top:2px;letter-spacing:.03em}
 .tm i{position:absolute;left:-3px;top:0;bottom:0;width:3px;background:#ff9a3c;box-shadow:0 0 12px 2px rgba(255,140,50,.8);opacity:.0;transition:opacity .15s}
@@ -248,6 +250,7 @@ img{image-rendering:pixelated;-webkit-user-drag:none;pointer-events:none}
     <button class="tm" id="tCont"><i></i><span class="l">Continuar</span><small id="tSub"></small></button>
     <button class="tm" id="tNew"><i></i><span class="l" id="tNewL">Nueva partida</span><small id="tNewS">Un mundo nuevo, solo para ti</small></button>
     <button class="tm" id="tHelp"><i></i><span class="l">Cómo jugar</span><small>Controles y consejos</small></button>
+    <button class="tm" id="tUpd"><i></i><span class="l" id="tUpdL">Actualizar juego</span><small id="tUpdS"></small></button>
     <button class="tm" id="tSnd"><i></i><span class="l" id="tSndL">Sonido: sí</span></button>
   </nav>
   <div class="tfoot" id="tInfo"></div>
@@ -1414,6 +1417,19 @@ function togglePanel(){panelOpen?closePanel():openPanel(near([12,13,16])?'craft'
 function setQuestMin(m){flags.qmin=m?1:0;$('quest').classList.toggle('min',!!m);$('qH').textContent=m?'›':'‹'}
 const qTog=e=>{e.preventDefault();e.stopPropagation();unlockAudio();snd('click');setQuestMin(!flags.qmin)};
 $('quest').addEventListener('touchstart',qTog,{passive:false});$('quest').addEventListener('mousedown',qTog);
+// Versión del juego: súbela en cada cambio para que «Actualizar juego» detecte que hay algo nuevo
+const BUILD='2026-11-15.4';
+let updFound=false,updArm=0;
+async function fetchBuild(){const r=await fetch(location.pathname+'?chk='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const m=/const BUILD='([^']+)'/.exec(await r.text());return m?m[1]:null}
+function reloadFresh(){try{if(gameStarted)save(true)}catch(_){}setTimeout(()=>location.replace(location.pathname+'?v='+Date.now()),250)}
+async function checkUpdate(silent){const L=$('tUpdL'),S=$('tUpdS');if(!silent){L.textContent='Buscando…';S.textContent=''}
+  try{const b=await fetchBuild();updFound=!!b&&b!==BUILD;$('tUpd').classList.toggle('new',updFound);
+    if(updFound){L.textContent='Actualizar ahora';S.textContent='¡Hay una versión nueva! Tu partida se guarda antes'}
+    else{L.textContent='Actualizar juego';S.textContent=silent?'Versión '+BUILD:'Ya tienes la última versión · toca para forzar'}}
+  catch(_){L.textContent='Actualizar juego';S.textContent=silent?'Versión '+BUILD:'No se pudo comprobar (¿sin internet?)'}}
+$('tUpd').addEventListener('click',async()=>{unlockAudio();
+  if(updFound||(updArm&&Date.now()-updArm<8000)){$('tUpdL').textContent='Actualizando…';reloadFresh();return}
+  await checkUpdate(false);if(updFound)reloadFresh();else updArm=Date.now()});
 let menuOpen=false,titleOpen=false,gameStarted=false,needHelp=false,newArm=0;
 const hasSave=()=>{try{if(localStorage.getItem(SK))return true}catch(_){}return gameStarted};
 function titleRefresh(){const has=hasSave();$('tCont').classList.toggle('hidden',!has);
@@ -1421,7 +1437,7 @@ function titleRefresh(){const has=hasSave();$('tCont').classList.toggle('hidden'
   newArm=0;$('tNew').classList.remove('arm');$('tNewL').textContent='Nueva partida';$('tNewS').textContent=has?'Empieza desde cero':'Un mundo nuevo, solo para ti';
   $('tSndL').textContent='Sonido: '+(muted?'no':'sí');
   $('tInfo').textContent=has?(cloudState==='ok'?'Tu partida también está guardada en tu cuenta':'Tu partida se guarda sola en este aparato'):'Todavía no hay ninguna partida guardada'}
-function openTitle(){titleOpen=true;$('title').classList.remove('hidden');titleRefresh();titleAnim(true)}
+function openTitle(){titleOpen=true;$('title').classList.remove('hidden');titleRefresh();titleAnim(true);updArm=0;$('tUpdS').textContent='Versión '+BUILD;checkUpdate(true)}
 function closeTitle(){titleOpen=false;$('title').classList.add('hidden');titleAnim(false)}
 $('tCont').addEventListener('click',()=>{unlockAudio();gameStarted=true;closeTitle();if(!flags.race)raceBegin()});
 $('tNew').addEventListener('click',()=>{unlockAudio();
