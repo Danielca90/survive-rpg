@@ -87,6 +87,8 @@ img{image-rendering:pixelated;-webkit-user-drag:none;pointer-events:none}
 #ta{width:68px;height:68px;border-radius:50%;flex-direction:column;right:calc(92px + var(--sr));bottom:calc(14px + var(--sb));background:rgba(150,90,30,.5);box-shadow:inset 0 0 0 2px rgba(255,220,150,.4)}
 #ta img{width:32px;height:32px}
 #ta span{font-size:10px;font-weight:700;letter-spacing:.5px}
+#tx{width:56px;height:56px;border-radius:50%;flex-direction:column;right:calc(104px + var(--sr));bottom:calc(92px + var(--sb));background:rgba(40,90,150,.55);box-shadow:inset 0 0 0 2px rgba(150,210,255,.45);font-size:10px;font-weight:700;text-align:center;line-height:1.05;color:#fff}
+#tx.cd{background:rgba(30,30,36,.6);color:#aaa}
 #ta.on{background:rgba(255,200,120,.65)}
 @media (orientation:portrait){
   #tl,#tr,#tj{bottom:calc(var(--hb) + 16px + var(--sb))}
@@ -172,6 +174,7 @@ img{image-rendering:pixelated;-webkit-user-drag:none;pointer-events:none}
   <div class="tb" id="tl"><svg viewBox="0 0 10 10"><path d="M7 1 L2 5 L7 9 Z" fill="#fff" stroke="#000" stroke-width=".8" stroke-linejoin="round"/></svg></div>
   <div class="tb" id="tr"><svg viewBox="0 0 10 10"><path d="M3 1 L8 5 L3 9 Z" fill="#fff" stroke="#000" stroke-width=".8" stroke-linejoin="round"/></svg></div>
   <div class="tb hidden" id="ta"><img id="taI" alt=""><span id="taT" class="ts">PICAR</span></div>
+  <div class="tb hidden" id="tx"><span id="txT"></span></div>
   <div class="tb" id="tj"><svg viewBox="0 0 10 10"><path d="M1.5 7 L5 2.5 L8.5 7 Z" fill="#fff" stroke="#000" stroke-width=".8" stroke-linejoin="round"/></svg></div>
 </div>
 
@@ -217,6 +220,10 @@ img{image-rendering:pixelated;-webkit-user-drag:none;pointer-events:none}
   <div style="font-size:34px;font-weight:700;color:#ffd54a;text-shadow:3px 3px 0 #000">Survive RPG</div>
   <div id="tInfo" style="margin:10px 0 18px;font-size:15px;opacity:.85"></div>
   <button class="btn big" id="tPlay" style="max-width:300px">Seguir jugando</button></div></div>
+<div id="race" class="ov hidden" style="z-index:31"><div class="win" style="width:min(640px,96vw)"><div class="whead"><h3>Elige tu raza</h3></div><div class="wbody">
+  <div class="sub" style="margin-top:0">Tu raza es permanente y define las habilidades que ganas al subir de nivel (1 a 20).</div>
+  <div class="cards" id="raceCards" style="grid-template-columns:1fr 1fr"></div>
+  <button class="btn big" id="raceOk" disabled style="margin-top:10px">Elige una raza</button></div></div></div>
 <div id="choice" class="ov hidden" style="z-index:30"><div class="win" style="width:min(460px,94vw)"><div class="whead"><h3>Partida guardada</h3></div>
   <div class="wbody"><div id="chT" style="margin-bottom:10px;font-size:15px"></div><div style="display:flex;gap:8px;flex-wrap:wrap">
   <button class="btn" id="chA" style="flex:1;min-width:150px;text-align:left"></button><button class="btn" id="chB" style="flex:1;min-width:150px;text-align:left;background:#4a4a52"></button></div></div></div></div>
@@ -299,6 +306,9 @@ it(112,'Manzana',{food:[10,4]});
 it(113,'Cantimplora vacía',{stack:1});
 it(114,'Cantimplora llena',{stack:1,food:[0,45]});
 it(146,'Lana');
+it(147,'Hueso');
+it(148,'Gelatina');
+it(149,'Aguijón');
 it(115,'Pluma');
 it(116,'Cuero');
 it(117,'Hilo');
@@ -437,6 +447,9 @@ ICON[142]=ingot('#b8692e','#f0a868');ICON[143]=ingot('#d8a820','#fff0a0');
 ICON[144]=tool(g=>{for(let y=3;y<=13;y++){const hw=y<7?(y-2)*1.3:(13-y)*.95;g.fillStyle=y<7?'#7ae8f8':'#2ab8d0';g.fillRect(Math.round(8-hw),y,Math.round(hw*2)||1,1)}g.fillStyle='#fff';g.fillRect(6,5,2,1);g.fillRect(5,6,1,1)});
 ICON[145]=tunic('#2ab8d0','#d0ffff');
 ICON[146]=tool(g=>{disc(g,'#f4f4f0',5.5,9,3.2);disc(g,'#ffffff',9,7.5,3.4);disc(g,'#e4e4de',10.5,10.5,3);disc(g,'#ffffff',7,11,2.6);g.fillStyle='#c8c8c0';g.fillRect(6,12,3,1)});
+ICON[147]=tool(g=>{ln(g,'#ecead8',4,12,12,4,2);g.fillStyle='#ecead8';g.fillRect(2,11,3,3);g.fillRect(11,2,3,3);g.fillStyle='#c8c6b0';g.fillRect(3,13,1,1)});
+ICON[148]=tool(g=>{ell(g,'#4ab84a',8,9.5,5.5,4.5);ell(g,'#7ae07a',7.5,8,3.5,2.5);g.fillStyle='#d8ffd8';g.fillRect(5,6,2,1)});
+ICON[149]=tool(g=>{ln(g,'#8a5a1a',3,13,12,3,2);ln(g,'#b8843a',3,12,11,3,1);g.fillStyle='#d62828';g.fillRect(12,2,2,3)});
 ICON[200]=tool(g=>{disc(g,'#c8962a',8,8,5.5);disc(g,'#ffd54a',8,8,4.3);g.fillStyle='#c8962a';g.fillRect(7,5,2,6);g.fillStyle='#fff6c0';g.fillRect(5,5,1,2)});
 IT[200]={id:200,name:'Monedas',stack:999};
 ICON[132]=tool(g=>{ell(g,'#f0ece0',8,8,5.5,4.5);ell(g,'#d8d2c0',8,8,2,1.6);g.fillStyle='#e33';g.fillRect(4,7,2,1);g.fillRect(4.5|0,6,1,3);g.fillStyle='#fff';g.fillRect(5,4,4,1)});
@@ -548,7 +561,32 @@ const cam={x:0,y:0};
 // Experiencia, niveles y habilidades
 let prog={lvl:1,xp:0,sp:0,sk:{}},floats=[];
 const sk=k=>prog.sk[k]||0;
-const maxHp=()=>100+10*sk('vigor');
+// ---- Expansiones (como las de WoW): cada una cubre un rango de niveles. Por ahora solo existe la primera ----
+const LVL_CAP=20;
+const EXPANSIONS=[{n:'Raíces del Mundo',a:1,b:20,d:'Los primeros pasos de un superviviente'}];
+const expOf=l=>EXPANSIONS.find(e=>l>=e.a&&l<=e.b)||EXPANSIONS[EXPANSIONS.length-1];
+// ---- Razas: Normal y Druida. Cada una gana habilidades al subir de nivel. m = bonos pasivos · act = habilidad activa con enfriamiento (cd, segundos) ----
+const RACES={
+ normal:{n:'Normal',d:'Superviviente adaptable: aprende más rápido, trabaja mejor y aguanta golpes.'},
+ druida:{n:'Druida',d:'Hijo de la naturaleza: se cura solo, domina las plantas y puede enraizar a sus enemigos.'}};
+const ABILS=[
+ {r:'normal',lvl:1,k:'voluntad',n:'Voluntad',d:'+10% de experiencia',m:{xp:.1}},
+ {r:'normal',lvl:3,k:'manos',n:'Manos hábiles',d:'+10% de velocidad al picar, talar y cavar',m:{mine:.1}},
+ {r:'normal',lvl:6,k:'aliento',n:'Segundo aliento',d:'Activa: recuperas 40 de vida y 25 de hambre',act:1,cd:45},
+ {r:'normal',lvl:10,k:'temple',n:'Temple',d:'−12% de daño recibido',m:{tough:.12}},
+ {r:'normal',lvl:15,k:'grito',n:'Grito de guerra',d:'Activa: +50% de daño durante 10 s',act:1,cd:60},
+ {r:'normal',lvl:20,k:'hierro',n:'Voluntad de hierro',d:'+20 de vida máxima',m:{hp:20}},
+ {r:'druida',lvl:1,k:'raices',n:'Hijo del bosque',d:'Las plantas alimentan 25% más y las bayas dan una extra',m:{plant:1}},
+ {r:'druida',lvl:2,k:'savia',n:'Savia vital',d:'Regeneras vida más rápido',m:{regen:.4}},
+ {r:'druida',lvl:4,k:'zarzas',n:'Zarzas',d:'Activa: enraíza 4 s e hiere a los monstruos cercanos',act:1,cd:20},
+ {r:'druida',lvl:7,k:'corteza',n:'Piel de corteza',d:'−10% de daño recibido',m:{tough:.1}},
+ {r:'druida',lvl:10,k:'abrazo',n:'Abrazo de la naturaleza',d:'Activa: recuperas 35 de vida y 20 de sed',act:1,cd:40},
+ {r:'druida',lvl:14,k:'paso',n:'Paso del bosque',d:'+10% de velocidad al caminar',m:{spd:.1}},
+ {r:'druida',lvl:17,k:'lobo',n:'Espíritu del lobo',d:'Activa: +40% de daño y +30% de velocidad durante 10 s',act:1,cd:50},
+ {r:'druida',lvl:20,k:'avatar',n:'Avatar del bosque',d:'+30 de vida máxima y mucha más regeneración',m:{hp:30,regen:.6}}];
+const raceAbils=()=>ABILS.filter(a=>a.r===flags.race&&a.lvl<=prog.lvl);
+function rmod(k){let v=0;if(flags.race)for(const a of ABILS)if(a.r===flags.race&&a.lvl<=prog.lvl&&a.m&&a.m[k])v+=a.m[k];if(typeof P!=='undefined'&&P&&P.buff&&P.buff.t>0&&P.buff[k])v+=P.buff[k];return v}
+const maxHp=()=>100+10*sk('vigor')+rmod('hp');
 const xpNeed=l=>30+25*(l-1);
 const SKILLS=[
  {k:'fuerza',n:'Fuerza',d:'+10% de daño al atacar',max:10,ic:()=>iconURL(109)},
@@ -558,8 +596,28 @@ const SKILLS=[
  {k:'aguante',n:'Aguante',d:'−8% de hambre y sed',max:5,ic:()=>iconURL(102)},
  {k:'suerte',n:'Suerte',d:'+6% de sacar el doble de mineral',max:5,ic:()=>iconURL(144)}];
 function floatTxt(x,y,txt,c){floats.push({x,y,txt,c,t:1.1})}
-function gainXp(n){n=Math.round(n);if(n<=0)return;prog.xp+=n;floatTxt(P.x+P.w/2,P.y-6,'+'+n+' XP','#9adcff');
-  while(prog.xp>=xpNeed(prog.lvl)){prog.xp-=xpNeed(prog.lvl);prog.lvl++;prog.sp++;P.hp=maxHp();snd('craft');toast(`¡Subiste a nivel ${prog.lvl}! +1 punto de habilidad (mochila → Habilidades)`,4)}}
+function gainXp(n){n=Math.round(n*(1+rmod('xp')));if(n<=0)return;if(prog.lvl>=LVL_CAP){prog.xp=0;return}prog.xp+=n;floatTxt(P.x+P.w/2,P.y-6,'+'+n+' XP','#9adcff');
+  while(prog.lvl<LVL_CAP&&prog.xp>=xpNeed(prog.lvl)){prog.xp-=xpNeed(prog.lvl);prog.lvl++;prog.sp++;P.hp=maxHp();snd('craft');
+    const nw=ABILS.filter(a=>a.r===flags.race&&a.lvl===prog.lvl);
+    if(nw.length&&!flags.ab&&nw.some(a=>a.act))flags.ab=nw.find(a=>a.act).k;
+    toast(nw.length?`¡Nivel ${prog.lvl}! Nueva habilidad: ${nw.map(a=>a.n).join(', ')}`:`¡Subiste a nivel ${prog.lvl}! +1 punto de habilidad (mochila → Habilidades)`,4.5);
+    if(prog.lvl>=LVL_CAP){prog.xp=0;setTimeout(()=>toast(`¡Completaste la expansión «${expOf(prog.lvl).n}»! Pronto llegará la siguiente`,6),4600)}}}
+// Habilidades activas: un botón (o la tecla Q) usa la habilidad equipada
+function useAbility(){if(paused()||P.dead)return;const a=ABILS.find(x=>x.k===flags.ab&&x.r===flags.race&&x.lvl<=prog.lvl);if(!a){toast('No tienes ninguna habilidad activa equipada',2);return}
+  if(P.abCd>0){toast(`${a.n}: espera ${Math.ceil(P.abCd)} s`,1.3);return}
+  const cx=P.x+P.w/2,cy=P.y+P.h/2;
+  if(a.k==='aliento'){P.hp=Math.min(maxHp(),P.hp+40);P.hu=Math.min(100,P.hu+25);floatTxt(cx,P.y-8,'+40','#7CFC8A')}
+  else if(a.k==='abrazo'){P.hp=Math.min(maxHp(),P.hp+35);P.th=Math.min(100,P.th+20);floatTxt(cx,P.y-8,'+35','#7CFC8A')}
+  else if(a.k==='grito')P.buff={t:10,dmg:.5};
+  else if(a.k==='lobo')P.buff={t:10,dmg:.4,spd:.3};
+  else if(a.k==='zarzas'){fxs.push({x:cx,y:P.y+P.h,t:.6,max:.6,r:5*TS,c:'#5ac85a'});for(const m of[...mobs])if(hostile(m)&&Math.hypot(m.x+m.w/2-cx,m.y+m.h/2-cy)<5*TS){m.rootT=4;m.hp-=8;m.hurt=.25;floatTxt(m.x+m.w/2,m.y-4,'-8','#7CFC8A');if(m.hp<=0)mobDie(m)}}
+  if(a.k==='grito'||a.k==='lobo'){fxs.push({x:cx,y:cy,t:.5,max:.5,r:2.5*TS,c:a.k==='grito'?'#ff8a4a':'#9adcff'});toast(a.n+'!',1.5)}
+  P.abCd=a.cd;snd('craft')}
+let fxs=[],arrows=[];
+function raceBegin(){const o=$('race'),c=$('raceCards');let sel_=null;c.innerHTML=Object.entries(RACES).map(([k,r])=>`<div class="card" data-rc="${k}" style="cursor:pointer"><div class="cname" style="font-size:18px">${r.n}</div><div class="sub" style="margin:0">${r.d}</div>${ABILS.filter(a=>a.r===k).map(a=>`<div class="sub" style="margin:2px 0 0"><b style="color:#ffd54a">Nv ${a.lvl}</b> ${a.n}${a.act?' ⚡':''}</div>`).join('')}</div>`).join('');
+  const ok=$('raceOk');ok.disabled=true;ok.textContent='Elige una raza';o.classList.remove('hidden');
+  c.onclick=e=>{const d=e.target.closest('[data-rc]');if(!d)return;sel_=d.dataset.rc;c.querySelectorAll('.card').forEach(x=>x.classList.toggle('ok',x===d));ok.disabled=false;ok.textContent='Ser '+RACES[sel_].n;snd('click')};
+  ok.onclick=()=>{if(!sel_)return;flags.race=sel_;const a=ABILS.find(a=>a.r===sel_&&a.act&&a.lvl<=prog.lvl);flags.ab=a?a.k:null;o.classList.add('hidden');P.hp=Math.min(maxHp(),P.hp);snd('craft');toast('Eres '+RACES[sel_].n,2.5,133);dirty()}}
 // Los monstruos suben de nivel con los días y con tu nivel
 function mobLvl(){const b=1+Math.floor((day-1)/3)+Math.floor((prog.lvl-1)/2);return clamp(b+(rnd()<.35?1:0)-(rnd()<.2?1:0),1,40)}
 function newPlayer(){P={x:spawn.x,y:spawn.y,vx:0,vy:0,w:11,h:27,on:false,wet:false,hp:maxHp(),hu:100,th:100,face:1,peak:spawn.y,hurt:0,atkCd:0,drinkCd:0,placeCd:0,swing:0,swingPh:0,walk:0,kb:0,dead:false,fish:null,hitSnd:0,ladder:false}}
@@ -613,6 +671,7 @@ addEventListener('keydown',e=>{keys[e.code]=true;unlockAudio();
   if(/^Digit[1-8]$/.test(e.code))select(+e.code[5]-1);
   if(e.code==='KeyE'||e.code==='Tab'){togglePanel();e.preventDefault()}
   if(e.code==='KeyF')eat();
+  if(e.code==='KeyQ'&&!e.repeat)useAbility();
   if(e.code==='KeyJ'&&!e.repeat&&!paused())pressAbt();
   if(e.code==='Escape'){if(panelOpen)closePanel();else if(menuOpen)closeMenu();else if(!titleOpen)openMenu()}
   if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault()});
@@ -656,6 +715,7 @@ function releaseAbt(){if(abt.down){abt.down=false;abt.released=true}$('ta').clas
 $('ta').addEventListener('touchstart',e=>{e.preventDefault();unlockAudio();if(!paused())pressAbt()},{passive:false});
 $('ta').addEventListener('touchend',e=>{e.preventDefault();releaseAbt()},{passive:false});
 $('ta').addEventListener('touchcancel',e=>{e.preventDefault();releaseAbt()},{passive:false});
+$('tx').addEventListener('touchstart',e=>{e.preventDefault();unlockAudio();useAbility()},{passive:false});$('tx').addEventListener('mousedown',e=>{e.preventDefault();unlockAudio();useAbility()});
 $('ta').addEventListener('mousedown',e=>{e.preventDefault();unlockAudio();if(!paused())pressAbt()});
 $('ta').addEventListener('mouseup',releaseAbt);$('ta').addEventListener('mouseleave',releaseAbt);
 
@@ -715,13 +775,13 @@ function mineTile(dt,tx,ty,tl,fr){
   if(!mine||mine.x!==tx||mine.y!==ty)mine={x:tx,y:ty,p:0,last:0};
   const d=BD[t],kind=tl&&tl.kind,lvl=kind==='pick'?tl.lvl:0,pow=(kind&&KIND_MAT[kind]===MAT[t])?tl.power:1;
   if(d.tool>lvl){if(fr)toast(t===B.BEDROCK?'Eso no se puede romper':['','Necesitas un pico de madera','Necesitas un pico de piedra o cobre','Necesitas un pico de hierro'][d.tool],2.2,[0,104,105,106][d.tool]);return}
-  mine.p+=(dt+(fr?.08:0))*pow*(up('taller')&&kind?1.3:1)*(1+.12*sk('mineria'))/d.hard;mine.last=clockT;P.swing=.15;
+  mine.p+=(dt+(fr?.08:0))*pow*(up('taller')&&kind?1.3:1)*(1+.12*sk('mineria')+rmod('mine'))/d.hard;mine.last=clockT;P.swing=.15;
   if((P.hitSnd-=dt)<=0){P.hitSnd=.22;snd('hit')}
   if(mine.p>=1){const ORE_XP={8:1,26:2,9:3,27:5,28:12};if(ORE_XP[t]){gainXp(ORE_XP[t]);if(rnd()<.06*sk('suerte')){const dd=BD[t].drop;spawnDrop(dd,1,tx*TS+4,ty*TS+4);floatTxt(tx*TS+8,ty*TS,'¡Doble!','#ffd54a')}}breakTile(tx,ty);mine=null;snd('brk');if(tl&&tl.dur)wear()}}
 function breakTile(tx,ty){
   const t=T(tx,ty),cx=tx*TS+4,cy=ty*TS+4,idx=K(tx,ty);
   if(t===B.LEAF||t===B.SNOWLEAF){const r=rnd();if(r<.1)spawnDrop(112,1,cx,cy);else if(r<.22)spawnDrop(22,1,cx,cy);else if(r<.34)spawnDrop(100,1,cx,cy)}
-  else if(t===B.BUSH){spawnDrop(103,1+(rnd()*3|0),cx,cy);if(rnd()<.35)spawnDrop(118,1,cx,cy)}
+  else if(t===B.BUSH){spawnDrop(103,1+(rnd()*3|0)+(rmod('plant')?1:0),cx,cy);if(rnd()<.35)spawnDrop(118,1,cx,cy)}
   else if(t===B.GRASS){spawnDrop(2,1,cx,cy);if(rnd()<.15)spawnDrop(118,1,cx,cy)}
   else if(t===B.CROP2){spawnDrop(119,1+(rnd()*2|0),cx,cy);spawnDrop(118,1+(rnd()*2|0),cx,cy)}
   else if(t===B.CROP0||t===B.CROP1)spawnDrop(118,1,cx,cy);
@@ -764,19 +824,25 @@ function useBed(tx,ty){const ow=bedOwner(tx,ty);if(ow){toast(`Esta es la cama de
   if(mobs.some(m=>hostile(m)&&Math.abs(m.x-P.x)<12*TS&&Math.abs(m.y-P.y)<8*TS)){toast('No puedes dormir: hay monstruos cerca',2.4);return}
   sleepT=1.6}
 function attack(m,tool_){
-  const dmg=(tool_&&tool_.dmg||HAND_DMG)*(1+.1*sk('fuerza'));m.hp-=dmg;floatTxt(m.x+m.w/2,m.y-4,'-'+Math.round(dmg),'#ff8a8a');if(tool_&&tool_.dur)wear();m.hurt=.25;m.kb=P.face*3;m.vy=-3;m.flee=4;P.atkCd=.35;P.swing=.2;snd('hit');
-  if(m.hp<=0){
+  const dmg=(tool_&&tool_.dmg||HAND_DMG)*(1+.1*sk('fuerza')+rmod('dmg'));m.hp-=dmg;floatTxt(m.x+m.w/2,m.y-4,'-'+Math.round(dmg),'#ff8a8a');if(tool_&&tool_.dur)wear();m.hurt=.25;m.kb=P.face*3;m.vy=-3;m.flee=4;P.atkCd=.35;P.swing=.2;snd('hit');
+  if(m.hp<=0)mobDie(m)}
+function mobDie(m){
     const cx=m.x+m.w/2,cy=m.y+m.h/2;
     if(m.type==='pig')spawnDrop(101,1+(rnd()*2|0),cx,cy);
     if(m.type==='cow'){spawnDrop(101,1+(rnd()*3|0),cx,cy);const l=rnd()*3|0;if(l)spawnDrop(116,l,cx,cy)}
     if(m.type==='sheep'){spawnDrop(101,1,cx,cy);spawnDrop(146,1+(rnd()*2|0),cx,cy);if(flags.qa&&qi===1)flags.sheepK=(flags.sheepK||0)+1}
     if(m.type==='chicken'){spawnDrop(101,1,cx,cy);spawnDrop(115,1+(rnd()*2|0),cx,cy)}
     if(m.type==='spider')spawnDrop(117,1+(rnd()*2|0),cx,cy);
-    if(hostile(m)){coins+=2;feed(200,2)}
-    gainXp((m.type==='zombie'?10:m.type==='spider'?12:3)*(1+.5*((m.lvl||1)-1)));
+    if(hostile(m)){const cc=MT[m.type].c||2;coins+=cc;feed(200,cc)}
+    gainXp(((MT[m.type]&&MT[m.type].xp)||3)*(1+.5*((m.lvl||1)-1)));
     if(m.type==='zombie'){if(rnd()<.35)spawnDrop(111,1+(rnd()*2|0),cx,cy);if(rnd()<.25)spawnDrop(115,1,cx,cy);if(rnd()<.08)spawnDrop(110,1,cx,cy)}
+    if(m.type==='wolf'){spawnDrop(101,1+(rnd()*2|0),cx,cy);const l=1+(rnd()*2|0);spawnDrop(116,l,cx,cy)}
+    if(m.type==='scorpion'&&rnd()<.6)spawnDrop(149,1,cx,cy);
+    if(m.type==='skeleton'){spawnDrop(147,1+(rnd()*2|0),cx,cy);if(rnd()<.2)spawnDrop(111,1,cx,cy)}
+    if(m.type==='slime')spawnDrop(148,1+(rnd()*2|0),cx,cy);
+    if(m.type==='brute'){spawnDrop(111,1+(rnd()*2|0),cx,cy);if(rnd()<.3)spawnDrop(110,1,cx,cy);spawnDrop(115,1+(rnd()*2|0),cx,cy)}
     mobs.splice(mobs.indexOf(m),1);snd('brk')}
-}
+
 function eat(){
   const s=inv[sel];if(!s||!isUsable(s.id))return;
   const id=s.id,it_=IT[id];
@@ -785,10 +851,10 @@ function eat(){
   const [h,w]=it_.food;
   if(id===114){if(P.th>=99){toast('No tienes sed',1.5);return}P.th=Math.min(100,P.th+w);inv[sel]={id:113,n:1};dirty();snd('drink');showName('Sed +'+w);return}
   if(P.hu>=99){toast('No tienes hambre',1.5);return}
-  P.hu=Math.min(100,P.hu+h);P.th=Math.min(100,P.th+w);useSel();flags.ate=1;snd('eat');
+  const pm=rmod('plant')&&[103,112,119,120].includes(id)?1.25:1;P.hu=Math.min(100,P.hu+h*pm);P.th=Math.min(100,P.th+w*pm);useSel();flags.ate=1;snd('eat');
   if((id===101||id===121)&&rnd()<.3){damage(6,'',true);toast('Crudo te cayó mal. Ásalo en una fogata',3,13)}else showName('Hambre +'+h)
 }
-function damage(n,cause,raw){if(P.dead)return;P.hp-=raw?n:n*(1-armor())*(up('piel')?.8:1);P.hurt=.5;snd('hurt');if(P.hp<=0)die(cause)}
+function damage(n,cause,raw){if(P.dead)return;P.hp-=raw?n:n*(1-armor())*(up('piel')?.8:1)*(1-rmod('tough'));P.hurt=.5;snd('hurt');if(P.hp<=0)die(cause)}
 function die(cause){P.hp=0;P.dead=true;P.fish=null;$('deadTxt').innerHTML=(cause?'Causa: <b>'+cause+'</b><br>':'')+'Sobreviviste '+day+' día'+(day>1?'s':'')+'. Conservas tu mochila.'+(spawn.bx!=null?'<br>Reaparecerás en tu cama.':'');$('dead').classList.remove('hidden');save()}
 $('respawn').addEventListener('click',()=>{$('dead').classList.add('hidden');const inv0=inv;if(spawn.bx!=null&&T(spawn.bx,spawn.by)!==B.BED)spawn={...worldSpawn};if(isWater(spawn.x+5,spawn.y+20))spawn=worldSpawn=findSpawn();initGuide();newPlayer();inv=inv0;P.hu=70;P.th=70;mobs=mobs.filter(m=>!hostile(m));dirty()});
 
@@ -802,9 +868,13 @@ function updDrops(dt){const c=pc();
     if(d.age>300)drops.splice(i,1)}}
 
 // ---------- Mobs ----------
-const MT={pig:{w:14,h:11,hp:10},chicken:{w:9,h:10,hp:5},cow:{w:16,h:13,hp:14},sheep:{w:14,h:11,hp:10},zombie:{w:11,h:27,hp:22},spider:{w:14,h:8,hp:12}};
-const hostile=m=>m.type==='zombie'||m.type==='spider';
-function addMob(type,tx,ty){const d=MT[type];const hl=type==='zombie'||type==='spider';const lv=hl?mobLvl():1;const mh=Math.round(d.hp*(1+.3*(lv-1)));const m={type,lvl:lv,maxHp:mh,dmul:1+.15*(lv-1),pathT:0,plan:null,breakT:0,w:d.w,h:d.h,hp:mh,x:tx*TS+(TS-d.w)/2,y:ty*TS-d.h-.5,vx:0,vy:0,kb:0,dir:0,t:0,hurt:0,flee:0,on:false,face:1,walk:0,hitCd:0};if(!boxHit(m.x,m.y,m.w,m.h)){mobs.push(m);return true}return false}
+const MT={pig:{w:14,h:11,hp:10},chicken:{w:9,h:10,hp:5},cow:{w:16,h:13,hp:14},sheep:{w:14,h:11,hp:10},zombie:{w:11,h:27,hp:22,dm:9,sp:.72,rg:26,xp:10,cn:'un zombi'},spider:{w:14,h:8,hp:12,dm:6,sp:.95,rg:18,xp:12,cn:'una araña'},
+ wolf:{w:16,h:11,hp:20,dm:7,sp:1.2,rg:24,xp:14,cn:'un lobo',cd:.7},scorpion:{w:13,h:7,hp:16,dm:4,sp:.6,rg:14,xp:11,cn:'un escorpión'},
+ skeleton:{w:11,h:27,hp:26,dm:6,sp:.62,rg:22,xp:16,cn:'un esqueleto'},slime:{w:12,h:10,hp:30,dm:5,sp:1,rg:16,xp:9,cn:'un limo'},
+ brute:{w:14,h:30,hp:60,dm:16,sp:.5,rg:26,xp:28,cn:'un zombi bruto',c:5}};
+const hostile=m=>!!(MT[m.type]&&MT[m.type].dm);
+const SUNBURN=new Set(['zombie','brute','skeleton']);
+function addMob(type,tx,ty){const d=MT[type];const hl=!!MT[type].dm;const lv=hl?mobLvl():1;const mh=Math.round(d.hp*(1+.3*(lv-1)));const m={type,lvl:lv,maxHp:mh,dmul:1+.15*(lv-1),pathT:0,plan:null,breakT:0,w:d.w,h:d.h,hp:mh,x:tx*TS+(TS-d.w)/2,y:ty*TS-d.h-.5,vx:0,vy:0,kb:0,dir:0,t:0,hurt:0,flee:0,on:false,face:1,walk:0,hitCd:0};if(!boxHit(m.x,m.y,m.w,m.h)){mobs.push(m);return true}return false}
 function surfaceSpot(minD,maxD,needGrass){const ptx=P.x/TS|0;for(let k=0;k<6;k++){const d=minD+rnd()*(maxD-minD);const x=Math.round(ptx+(rnd()<.5?-d:d));const y=topAt(x);if(y<=2||y>=H-1)continue;const t=T(x,y);if(needGrass&&t!==B.GRASS)continue;if(T(x,y-1)===B.WATER)continue;return{x,y}}return null}
 function caveSpot(){const ptx=P.x/TS|0,pty=P.y/TS|0;for(let k=0;k<10;k++){const x=ptx+(rnd()<.5?-1:1)*(10+rnd()*14|0),y=pty+(rnd()*16|0)-8;if(y<2||y>=H-2)continue;if(T(x,y)===B.AIR&&solidAt(x,y+1)&&y>topAt(x)+4)return{x,y:y+1}}return null}
 const night=()=>Math.sin(time*Math.PI*2)<-.08;
@@ -814,8 +884,14 @@ function spawner(){
   let an=0,hos=0,sp=0;for(const m of mobs){if(hostile(m)){hos++;if(m.type==='spider')sp++}else an++}
   const maxHos=hordeActive?(day===1?4:6):3;
   if(an<6&&rnd()<.15){const s=surfaceSpot(16,45,true);if(s){const r=rnd();addMob(r<.28?'pig':r<.52?'chicken':r<.74?'cow':'sheep',s.x,s.y)}}
-  if(night()&&hos<maxHos&&rnd()<(hordeActive?.3:.15)){const s=surfaceSpot(18,32,false);if(s)addMob(rnd()<.85?'zombie':'spider',s.x,s.y)}
-  if(underground()&&sp<2&&hos<4&&rnd()<.05){const s=caveSpot();if(s)addMob('spider',s.x,s.y)}
+  const pl=prog.lvl;
+  // De noche: infectados y bichos según el bioma (más variedad al subir de nivel)
+  if(night()&&hos<maxHos&&rnd()<(hordeActive?.3:.15)){const s=surfaceSpot(18,32,false);if(s){const b=biomeAt(s.x),r=rnd();let t=rnd()<.85?'zombie':'spider';
+    if(b==='desierto'&&pl>=2&&r<.5)t='scorpion';else if((b==='nieve'||b==='bosque')&&pl>=4&&r<.4)t='wolf';else if(b==='montaña'&&pl>=6&&r<.45)t='skeleton';else if(pl>=8&&day>=3&&r>.82)t='brute';else if(pl>=3&&r>.9)t='slime';
+    if(addMob(t,s.x,s.y)&&t==='wolf'&&hos<maxHos-1)addMob('wolf',s.x+2,s.y)}}
+  // De día: fauna peligrosa de algunos biomas (no se quema con el sol)
+  if(!night()&&hos<2&&rnd()<.05){const s=surfaceSpot(22,40,false);if(s){const b=biomeAt(s.x);if(b==='desierto'&&pl>=2)addMob('scorpion',s.x,s.y);else if(b==='nieve'&&pl>=4)addMob('wolf',s.x,s.y);else if((b==='pradera'||b==='bosque')&&pl>=3&&rnd()<.4)addMob('slime',s.x,s.y)}}
+  if(underground()&&sp<2&&hos<4&&rnd()<.05){const s=caveSpot();if(s){const r=rnd();addMob(pl>=6&&r<.35?'skeleton':pl>=3&&r>.8?'slime':'spider',s.x,s.y)}}
 }
 // ---- Inteligencia de los infectados: buscan un camino hasta ti (saltan, bajan, rodean) ----
 function canStand(x,y,tall){if(y<2||y>=H-1)return false;if(solidAt(x,y)||(tall&&solidAt(x,y-1)))return false;return solidAt(x,y+1)||T(x,y)===B.WATER||T(x,y+1)===B.WATER||T(x,y)===B.LADDER}
@@ -857,22 +933,26 @@ function updMobs(dt){const nt=night();
   for(let i=mobs.length-1;i>=0;i--){const m=mobs[i];m.hurt-=dt;m.flee-=dt;m.t-=dt;m.hitCd-=dt;
     const dxp=(P.x+P.w/2)-(m.x+m.w/2),dyp=(P.y+P.h/2)-(m.y+m.h/2);
     if(hostile(m)){
-      const range=m.type==='spider'?18:26;
+      const MD=MT[m.type],range=MD.rg;
       let tg=P.dead?null:P,bd_=tg?Math.abs(dxp)+Math.abs(dyp)*2:1e9;
       for(const n of npcs){const d=Math.abs(n.x-m.x)+Math.abs(n.y-m.y)*2;if(d<bd_){bd_=d;tg=n}}
       const tdx=tg?(tg.x+tg.w/2)-(m.x+m.w/2):0,tdy=tg?(tg.y+tg.h/2)-(m.y+m.h/2):0;
       const chasing=tg&&Math.abs(tdx)<range*TS&&Math.abs(tdy)<14*TS;
-      if(chasing&&m.type==='zombie')zombieThink(m,tg,tdx,tdy,dt);
+      if(chasing&&(m.type==='zombie'||m.type==='brute'))zombieThink(m,tg,tdx,tdy,dt);
       else if(chasing){m.dir=Math.sign(tdx)}
       else if(m.t<=0){m.dir=rnd()<.5?-1:1;m.t=2}
-      m.vx=m.dir*(m.type==='spider'?.95:.72);
+      m.vx=m.dir*MD.sp;
+      if(m.type==='skeleton'&&chasing){const ad=Math.abs(tdx);if(ad<5*TS)m.dir=-Math.sign(tdx);else if(ad<8*TS)m.dir=0;m.vx=m.dir*MD.sp;
+        if((m.shootCd=(m.shootCd||1.5)-dt)<=0&&ad<14*TS&&Math.abs(tdy)<5*TS){m.shootCd=2.2;const ax=m.x+m.w/2,ay=m.y+8,dd=Math.hypot(tdx,tdy-4)||1;arrows.push({x:ax,y:ay,vx:tdx/dd*3,vy:(tdy-4)/dd*3-.5,t:3,dm:MD.dm*(m.dmul||1),mine:m});m.face=Math.sign(tdx)||1;if(onScreen(m))snd('hit')}}
+      if(m.type==='slime'){if(m.on){m.vx=0;if(chasing&&m.t<=0){m.vy=-4.6;m.t=1.2;m.hop=Math.sign(tdx)||1}}else m.vx=(m.hop||0)*MD.sp}
+      if(m.rootT>0){m.rootT-=dt;m.vx=0}
       if(m.type==='spider'){if(m.hitX&&chasing)m.vy=-2.3;else if(m.hitX&&m.on)m.vy=-5.6}   // las arañas trepan muros
-      else if(m.hitX&&m.on&&!m.jumped&&!m.noJump)m.vy=-6.4;
-      if(tg&&overlap(m,tg)&&m.hitCd<=0){m.hitCd=1;const dm=(m.type==='spider'?6:9)*(m.dmul||1);
-        if(tg===P){damage(dm,m.type==='spider'?'una araña':'un zombi');P.kb=(tdx>0?4:-4);P.vy=-3}
+      else if(m.type!=='slime'&&m.hitX&&m.on&&!m.jumped&&!m.noJump)m.vy=-6.4;
+      if(tg&&overlap(m,tg)&&m.hitCd<=0){m.hitCd=MD.cd||1;const dm=MD.dm*(m.dmul||1);
+        if(tg===P){damage(dm,MD.cn);P.kb=(tdx>0?4:-4);P.vy=-3;if(m.type==='scorpion'){P.poison=5;toast('¡Envenenado!',1.5)}}
         else{tg.hp-=tg.role==='guardia'?dm*(up('guardias')?.25:.5):dm;tg.hurt=.4;tg.kb=(tdx>0?3:-3);tg.vy=-3;if(onScreen(tg))snd('hurt')}}
-      if(m.type==='zombie'){const cx=Math.floor((m.x+m.w/2)/TS);if(!nt&&m.y/TS<topAt(cx)){m.hp-=dt*6;m.burn=true}else m.burn=false;
-        if(Math.abs(dxp)<10*TS&&rnd()<dt*.15)snd('zombie')}
+      if(SUNBURN.has(m.type)){const cx=Math.floor((m.x+m.w/2)/TS);if(!nt&&m.y/TS<topAt(cx)){m.hp-=dt*6;m.burn=true}else m.burn=false;
+        if(m.type!=='skeleton'&&Math.abs(dxp)<10*TS&&rnd()<dt*.15)snd('zombie')}
       if(m.hp<=0){mobs.splice(i,1);continue}
     }else{
       if(m.flee>0){m.dir=-Math.sign(dxp)||1;m.vx=m.dir*1.3}
@@ -886,12 +966,18 @@ function updMobs(dt){const nt=night();
     // se van si están lejos, o si es de día y no los estás viendo
     if(Math.abs(m.x-P.x)>45*TS||(hostile(m)&&!nt&&!onScreen(m)&&!(m.type==='spider'&&m.y/TS>topAt(Math.floor(m.x/TS))+4)))mobs.splice(i,1)}}
 
+function updArrows(dt){for(let i=arrows.length-1;i>=0;i--){const a=arrows[i];a.t-=dt;a.vy+=.05;a.x+=a.vx;a.y+=a.vy;
+    const box={x:a.x-1,y:a.y-1,w:3,h:3};let dead=a.t<=0||solidAt(Math.floor(a.x/TS),Math.floor(a.y/TS));
+    if(!dead&&!P.dead&&overlap(box,P)){damage(a.dm,'un esqueleto');P.kb=a.vx>0?3:-3;dead=true}
+    if(!dead)for(const n of npcs)if(overlap(box,n)){n.hp-=a.dm;n.hurt=.4;dead=true;break}
+    if(dead)arrows.splice(i,1)}
+  for(let i=fxs.length-1;i>=0;i--){if((fxs[i].t-=dt)<=0)fxs.splice(i,1)}}
 // ---------- Jugador ----------
 function updPlayer(dt){
   if(P.dead)return;
   const L=keys.KeyA||keys.ArrowLeft||tb.l,Rt=keys.KeyD||keys.ArrowRight||tb.r,J=keys.KeyW||keys.Space||keys.ArrowUp||tb.j,Dn=keys.KeyS||keys.ArrowDown;
   const mv=(Rt?1:0)-(L?1:0);
-  P.vx=mv*1.55*(up('botas')?1.25:1)*(1+.06*sk('agilidad'))+P.kb;P.kb*=.85;if(Math.abs(P.kb)<.05)P.kb=0;
+  P.vx=mv*1.55*(up('botas')?1.25:1)*(1+.06*sk('agilidad')+rmod('spd'))+P.kb;P.kb*=.85;if(Math.abs(P.kb)<.05)P.kb=0;
   if(mv&&!ptr.down)P.face=mv;
   const cx=Math.floor((P.x+P.w/2)/TS);
   P.ladder=T(cx,Math.floor((P.y+P.h*.5)/TS))===B.LADDER||T(cx,Math.floor((P.y+P.h-2)/TS))===B.LADDER;
@@ -911,7 +997,9 @@ function stats(dt){
   if(P.dead)return;
   const ag=1-.08*sk('aguante');P.hu=Math.max(0,P.hu-dt*100/600*ag);P.th=Math.max(0,P.th-dt*100/450*ag);
   if(rain&&underSky())P.th=Math.min(100,P.th+dt*2.2);
-  if(P.hu>50&&P.th>50&&P.hp<maxHp())P.hp=Math.min(maxHp(),P.hp+dt*.6);
+  if(P.hu>50&&P.th>50&&P.hp<maxHp())P.hp=Math.min(maxHp(),P.hp+dt*(.6+rmod('regen')));
+  if(P.abCd>0)P.abCd-=dt;if(P.buff&&P.buff.t>0)P.buff.t-=dt;
+  if(P.poison>0){P.poison-=dt;P.hp-=dt*1.5;if(P.hp<=0)die('veneno')}
   if(P.hu<=0||P.th<=0){P.hp-=dt*1.2;if(P.hp<=0)die(P.hu<=0?'hambre':'sed')}
   if(P.hu<20)warnOnce('hu'+day,'Tienes mucha hambre: caza o busca bayas',3.5,102);
   if(P.th<20)warnOnce('th'+day,'Tienes mucha sed: toca el agua para beber',3.5,114);
@@ -1030,7 +1118,7 @@ const roleName=n=>n.g==='f'?ROLES[n.role].f:ROLES[n.role].n;
 const maxPop=()=>up('casas')?12:8;
 // Tienda del comerciante: [objeto, cantidad, precio]. Todo se gana jugando: no hay compras con dinero real.
 const BUY=[[132,2,8],[133,1,15],[118,3,5],[14,4,8],[120,1,6],[102,2,8],[116,2,8],[110,1,12],[113,1,10],[105,1,25],[130,1,25],[127,1,20],[124,1,45],[106,1,60]];
-const SELL={146:3,26:2,27:6,142:4,143:15,144:30,4:1,10:1,3:1,111:2,9:4,110:6,101:1,102:3,103:1,112:1,119:2,120:4,121:1,122:3,115:1,116:3,117:2};
+const SELL={147:2,148:3,149:4,146:3,26:2,27:6,142:4,143:15,144:30,4:1,10:1,3:1,111:2,9:4,110:6,101:1,102:3,103:1,112:1,119:2,120:4,121:1,122:3,115:1,116:3,117:2};
 // Busca un cuarto cerrado alrededor de (x,y). Las puertas cuentan como pared.
 function roomAt(x,y){const MAXR=90;if(y<0||y>=H)return null;if(BD[T(x,y)].solid)return null;
   const seen=new Set(),q=[x,y];let n=0,door=false,light=false,beds=0,key=Infinity;
@@ -1203,7 +1291,7 @@ function craft(i){const r=RC[i];if(!canCraft(r))return;r.need.forEach(([id,n])=>
 
 // ---------- Interfaz ----------
 let panelOpen=false,panelMode='inv',chestIdx=null,helpOpen=false,pickSlot=null,cat='all';
-const paused=()=>panelOpen||helpOpen||(document.getElementById('choice')&&!document.getElementById('choice').classList.contains('hidden'))||(typeof menuOpen!=='undefined'&&(menuOpen||titleOpen))||(P&&P.dead);
+const paused=()=>panelOpen||helpOpen||!$('race').classList.contains('hidden')||(document.getElementById('choice')&&!document.getElementById('choice').classList.contains('hidden'))||(typeof menuOpen!=='undefined'&&(menuOpen||titleOpen))||(P&&P.dead);
 function slotHTML(s,i,cls,src){const du=durOf(s);return`<div class="slot ${cls}" data-i="${i}" data-src="${src||'inv'}">${du&&du[0]<du[1]?`<i class="dur" style="width:${Math.max(4,du[0]/du[1]*76)}%;background:${du[0]/du[1]>.5?'#7CFC8A':du[0]/du[1]>.2?'#ffd54a':'#ff5a5a'}"></i>`:''}${s?`<img src="${iconURL(s.id)}" alt="">${s.n>1?`<span class="ts">${s.n}</span>`:''}`:''}</div>`}
 function renderHotbar(){$('hotbar').innerHTML=inv.slice(0,8).map((s,i)=>slotHTML(s,i,i===sel?'sel':'')).join('')}
 const hbTap=e=>{const el=e.target.closest('.slot');if(el){e.preventDefault();unlockAudio();select(+el.dataset.i,true)}};
@@ -1225,7 +1313,9 @@ function renderPanel(){
   const tabs=`<button class="tab ${panelMode==='inv'?'on':''}" data-tab="inv">Mochila</button><button class="tab ${panelMode==='craft'?'on':''}" data-tab="craft">Fabricar</button><button class="tab ${panelMode==='skills'?'on':''}" data-tab="skills">Habilidades${prog.sp?' ('+prog.sp+')':''}</button>`;
   if(panelMode==='skills'){
     win.innerHTML=head('Habilidades',PIPS.h.full,tabs)+`<div class="wbody">
-      <div class="info"><div style="font-size:22px;color:#9adcff;font-weight:700">Nv ${prog.lvl}</div><div style="flex:1"><div class="sub" style="margin:0">Experiencia ${prog.xp}/${xpNeed(prog.lvl)} · ganas XP matando monstruos y sacando minerales</div><div class="prog" style="height:6px;background:rgba(255,255,255,.12);border-radius:3px;overflow:hidden;margin-top:4px"><i style="display:block;height:100%;width:${prog.xp/xpNeed(prog.lvl)*100}%;background:#9adcff"></i></div></div></div>
+      <div class="info"><div style="font-size:22px;color:#9adcff;font-weight:700">Nv ${prog.lvl}</div><div style="flex:1"><div class="sub" style="margin:0">Experiencia ${prog.lvl>=LVL_CAP?'máxima':prog.xp+'/'+xpNeed(prog.lvl)} · ganas XP matando monstruos y sacando minerales</div><div class="prog" style="height:6px;background:rgba(255,255,255,.12);border-radius:3px;overflow:hidden;margin-top:4px"><i style="display:block;height:100%;width:${prog.lvl>=LVL_CAP?100:prog.xp/xpNeed(prog.lvl)*100}%;background:#9adcff"></i></div></div></div>
+      <div class="info" style="margin-bottom:6px"><div style="flex:1"><div class="sub" style="margin:0"><b style="color:#ffd54a">Expansión: ${expOf(prog.lvl).n}</b> (niveles ${expOf(prog.lvl).a}–${expOf(prog.lvl).b}) · Raza: <b>${flags.race?RACES[flags.race].n:'sin elegir'}</b>${prog.lvl>=LVL_CAP?' · <b style="color:#7CFC8A">¡Nivel máximo!</b>':''}</div></div></div>
+      ${flags.race?`<div class="lbl">HABILIDADES DE RAZA · ⚡ = activa (botón azul o tecla Q)</div>${ABILS.filter(a=>a.r===flags.race).map(a=>{const un=a.lvl<=prog.lvl;return`<div class="skrow" style="opacity:${un?1:.45}"><div class="t"><b>${a.n}</b> ${a.act?'⚡':''}<small>${un?'':'Se desbloquea en el nivel '+a.lvl+' · '}${a.d}${a.act?' · espera '+a.cd+' s':''}</small></div>${a.act&&un?`<button class="btn" data-eq="${a.k}" ${flags.ab===a.k?'disabled':''}>${flags.ab===a.k?'Equipada':'Equipar'}</button>`:''}</div>`}).join('')}`:''}
       <div class="lbl">${prog.sp?`TIENES ${prog.sp} PUNTO(S) PARA REPARTIR`:'SUBE DE NIVEL PARA GANAR PUNTOS'}</div>
       ${SKILLS.map(k=>`<div class="skrow"><div class="ic"><img src="${k.ic()}" alt=""></div><div class="t"><b>${k.n}</b> ${sk(k.k)}/${k.max}<small>${k.d}</small><div class="pips">${Array.from({length:k.max},(_,i)=>`<i class="${i<sk(k.k)?'on':''}"></i>`).join('')}</div></div><button class="btn" data-sk="${k.k}" ${prog.sp&&sk(k.k)<k.max?'':'disabled'}>+</button></div>`).join('')}
       <div class="sub" style="margin-top:8px">Ojo: los monstruos también suben de nivel con los días y con tu nivel. El número encima de ellos es su nivel (amarillo o rojo = más fuerte que tú).</div></div>`;return}
@@ -1261,6 +1351,7 @@ $('win').addEventListener('click',e=>{
   const nb=e.target.closest('[data-new]');if(nb){if(Date.now()-nwArm>3000){nwArm=Date.now();nb.textContent='¿Seguro? Toca otra vez';return}try{localStorage.removeItem(SK)}catch(_){}newWorld();closePanel();return}
   const b=e.target.closest('button[data-r]');if(b){craft(+b.dataset.r);return}
   const skb=e.target.closest('[data-sk]');if(skb){const k=skb.dataset.sk,d=SKILLS.find(x=>x.k===k);if(prog.sp>0&&sk(k)<d.max){prog.sp--;prog.sk[k]=sk(k)+1;if(k==='vigor')P.hp+=10;snd('craft')}renderPanel();return}
+  const eq=e.target.closest('[data-eq]');if(eq){flags.ab=eq.dataset.eq;snd('click');renderPanel();return}
   const ug=e.target.closest('[data-upg]');if(ug){buyUpg(ug.dataset.upg);renderPanel();return}
   if(e.target.closest('[data-party]')){if(coins>=20&&npcs.length){coins-=20;npcs.forEach(n=>n.morale=Math.min(100,n.morale+25));snd('craft');toast('¡Fiesta! Todos están más contentos',2.5,120)}renderPanel();return}
   const iv=e.target.closest('[data-inv]');if(iv){if(coins>=25&&!flags.nextRole){coins-=25;flags.nextRole=iv.dataset.inv;snd('craft');toast(`Corriste la voz: llegará un ${ROLES[flags.nextRole].n.toLowerCase()}`,3,ROLES[flags.nextRole].tool)}renderPanel();return}
@@ -1309,7 +1400,7 @@ $('bHelp').addEventListener('click',()=>{helpOpen=true;$('help').classList.remov
 $('hGo').addEventListener('click',()=>{closeHelp();grabFocus()});
 $('focusHint').addEventListener('mousedown',e=>{e.preventDefault();grabFocus();$('focusHint').classList.add('hidden')});$('hX').addEventListener('click',closeHelp);
 $('rotOk').addEventListener('click',()=>{rotDismiss=true;checkRotate()});
-function newWorld(){gen((rnd()*1e9)|0);newPlayer();inv=new Array(24).fill(null);addItem(103,3);mobs=[];drops=[];time=.05;day=1;rain=false;weatherT=100;warned={};flags={story:1};qi=0;qKey='';coins=0;prog={lvl:1,xp:0,sp:0,sk:{}};bdmg=new Map();floats=[];npcs=[];pantry=new Array(12).fill(null);houses=[];arriveCd=0;hordeActive=false;sel=0;cam.x=P.x-VW/2;cam.y=P.y-VH/2;dirty()}
+function newWorld(){gen((rnd()*1e9)|0);newPlayer();inv=new Array(24).fill(null);addItem(103,3);mobs=[];drops=[];time=.05;day=1;rain=false;weatherT=100;warned={};flags={story:1};qi=0;qKey='';coins=0;prog={lvl:1,xp:0,sp:0,sk:{}};bdmg=new Map();floats=[];npcs=[];pantry=new Array(12).fill(null);houses=[];arriveCd=0;hordeActive=false;sel=0;cam.x=P.x-VW/2;cam.y=P.y-VH/2;dirty();raceBegin()}
 
 // HUD con corazones, comida y gotas
 function buildPips(id){$(id).innerHTML='<i></i>'.repeat(10)}
@@ -1318,12 +1409,13 @@ const pipCache={};
 function setPips(id,set,v){const k=Math.round(v/5);if(pipCache[id]===k)return;pipCache[id]=k;const els=$(id).children;for(let i=0;i<10;i++){const u=k-i*2;els[i].style.backgroundImage=`url(${u>=2?set.full:u===1?set.half:set.empty})`}$(id).classList.toggle('low',v<25)}
 let focusShown=null,clkKey='',lvlShown='',coinShown=-1,safeShown='x';
 function hud(){
+  {const a=ABILS.find(x=>x.k===flags.ab&&x.r===flags.race&&x.lvl<=prog.lvl),b=$('tx'),on=!!(a&&touch&&!paused());b.classList.toggle('hidden',!on);if(on){b.classList.toggle('cd',P.abCd>0);const t=P.abCd>0?Math.ceil(P.abCd)+' s':a.n;if(b._t!==t){b._t=t;$('txT').textContent=t}}}
   setPips('sh',PIPS.h,P.hp/maxHp()*100);setPips('sf',PIPS.f,P.hu);setPips('sw',PIPS.w,P.th);
   const hr=(6+time*24)%24,h=Math.floor(hr),mi=Math.floor((hr-h)*6)*10;
   const ck=`${day}|${h}|${mi}|${night()}|${rain}`;if(ck!==clkKey){clkKey=ck;$('clkI').src=rain?RAIN:night()?MOON:SUN;$('clkT').textContent=`Día ${day} · ${h}:${mi?mi:'00'}`}
   if(!touch){const nf=!document.hasFocus()&&!paused();if(nf!==focusShown){focusShown=nf;$('focusHint').classList.toggle('hidden',!nf)}}
   if(coinShown!==coins){coinShown=coins;$('coinT').textContent=coins}
-  const lk=prog.lvl+'|'+prog.xp+'|'+prog.sp;if(lk!==lvlShown){lvlShown=lk;$('lvT').textContent='Nv '+prog.lvl;$('xpB').style.width=(prog.xp/xpNeed(prog.lvl)*100)+'%';$('bInv').classList.toggle('badge',prog.sp>0)}
+  const lk=prog.lvl+'|'+prog.xp+'|'+prog.sp;if(lk!==lvlShown){lvlShown=lk;$('lvT').textContent='Nv '+prog.lvl;$('xpB').style.width=(prog.lvl>=LVL_CAP?100:prog.xp/xpNeed(prog.lvl)*100)+'%';$('bInv').classList.toggle('badge',prog.sp>0)}
   const sk=night()?(inShelter?'ok':'bad'):'';if(sk!==safeShown){safeShown=sk;const e=$('safe');e.classList.toggle('hidden',!sk);e.className=sk?sk:'hidden';e.textContent=sk==='ok'?'A salvo':'A la intemperie'}
   if(invDirty){invDirty=false;renderHotbar();updModeBtn();if(panelOpen)renderPanel()}
 }
@@ -1364,7 +1456,7 @@ function cloudPush(force){if(!cloudDoc||!lastStateStr)return;if(!force&&Date.now
     await cloudDoc.set({json:str,savedAt:at,day,lvl:prog.lvl,v:4});cloudAt=Date.now();cloudState='ok'
   }catch(e){dirty.forEach(cx=>cloudDirty.add(cx));cloudState=e&&e.code==='quota_exceeded'?'full':'err'}
   finally{cloudBusy=false;if(cloudPending){cloudPending=false;cloudPush(true)}}})()}
-function afterLoad(){cam.x=P.x-VW/2;cam.y=P.y-VH/2;qKey='';setQuestMin(flags.qmin);helpOpen=false;$('help').classList.add('hidden');dirty()}
+function afterLoad(){if(!flags.race)raceBegin();cam.x=P.x-VW/2;cam.y=P.y-VH/2;qKey='';setQuestMin(flags.qmin);helpOpen=false;$('help').classList.add('hidden');dirty()}
 function ago(t){if(!t)return'nunca';const m=Math.round((Date.now()-t)/60000);return m<1?'hace un momento':m<60?`hace ${m} min`:m<1440?`hace ${Math.round(m/60)} h`:`hace ${Math.round(m/1440)} día(s)`}
 function choose(title,a,b){return new Promise(res=>{const o=$('choice');$('chT').textContent=title;$('chA').innerHTML=a;$('chB').innerHTML=b;o.classList.remove('hidden');
   const done=v=>{o.classList.add('hidden');$('chA').onclick=$('chB').onclick=null;res(v)};$('chA').onclick=()=>done('a');$('chB').onclick=()=>done('b')})}
@@ -1401,7 +1493,7 @@ function tick(dt){
   if(sleepT>0){const before=sleepT;sleepT-=dt;if(before>.8&&sleepT<=.8){time=.01;day++;mobs=mobs.filter(m=>!hostile(m));P.hu=Math.max(0,P.hu-10);P.th=Math.max(0,P.th-10);P.hp=Math.min(maxHp(),P.hp+30);toast('¡Buenos días! Día '+day,2.5);hordeActive=false;newDay()}return}
   time+=dt/DAY;if(time>=1){time-=1;day++;hordeActive=false;toast('Día '+day+': ¡sobreviviste la noche!',3);newDay()}
   const n=night();if(n&&!wasNight){hordeActive=isHordeNight();toast(hordeActive?(day===1?'¡Primera noche! Llegan los infectados. Entra a tu refugio y cierra la puerta':'¡Horda! Los infectados atacan el refugio'):'Cae la noche y salen los infectados. ¡Refúgiate!',4)}if(!n&&wasNight)hordeActive=false;wasNight=n;
-  weather(dt);updPlayer(dt);handleSrc(ptr,ptrTarget,dt);if(abt.down&&!actTool())releaseAbt();handleSrc(abt,frontTarget,dt);villageTick(dt);updNpcs(dt);updGuide(dt);stats(dt);updMobs(dt);updDrops(dt);
+  weather(dt);updPlayer(dt);handleSrc(ptr,ptrTarget,dt);if(abt.down&&!actTool())releaseAbt();handleSrc(abt,frontTarget,dt);villageTick(dt);updNpcs(dt);updGuide(dt);stats(dt);updMobs(dt);updArrows(dt);updDrops(dt);
   if((spawnT-=dt)<=0){spawnT=1;spawner();questTick()}
   if((growT-=dt)<=0){growT=1;grow()}
   if((regrowT-=dt)<=0){regrowT=15;regrow()}
@@ -1450,6 +1542,8 @@ function render(){
   for(const[k,v]of bdmg){const x=KX(k),y=KY(k);if(x<tx0||x>tx1||y<ty0||y>ty1)continue;const p=Math.min(1,v/blockHp(T(x,y))),X=x*TS,Y=y*TS;ctx.fillStyle=`rgba(0,0,0,${p*.45})`;ctx.fillRect(X,Y,TS,TS);ctx.strokeStyle='rgba(0,0,0,.8)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(X+3,Y+2);ctx.lineTo(X+3+p*8,Y+2+p*10);ctx.moveTo(X+13,Y+3);ctx.lineTo(X+13-p*6,Y+3+p*9);ctx.stroke()}
   for(const d of drops){const bob=Math.sin(clockT*4+d.x)*1.2;ctx.drawImage(icon(d.id),Math.round(d.x),Math.round(d.y+bob),10,10)}
   for(const m of mobs)drawMob(m);
+  for(const a of arrows){ctx.strokeStyle='#d8c898';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(a.x-a.vx*1.5,a.y-a.vy*1.5);ctx.lineTo(a.x,a.y);ctx.stroke()}
+  for(const f of fxs){const k=1-f.t/f.max;ctx.globalAlpha=1-k;ctx.strokeStyle=f.c;ctx.lineWidth=2;ctx.beginPath();ctx.arc(f.x,f.y,f.r*k,0,7);ctx.stroke();ctx.globalAlpha=1}
   for(const n of npcs)drawNpc(n);
   if(guide)drawGuide();
   if(!P.dead)drawPlayer();
@@ -1490,6 +1584,7 @@ function drawPlayer(){
   const g=P.on&&Math.abs(P.vx)>.1?Math.round(Math.sin(P.walk)*2):0;
   const ar=armor(),shirt=ar===.5?'#b8bcc2':ar?'#8a5a2b':'#2f9e8f',shirtD=ar===.5?'#8a8e94':ar?'#6b4423':'#237a6e';
   sprite(X,Y,w,f,[[2+g,19,3,8,'#33508f'],[6-g,19,3,8,'#2b4478'],[2+g,26,3,1,'#222'],[6-g,26,3,1,'#222'],[1,10,9,10,shirt],[1,10,2,10,shirtD],[1,18,9,1,'#5a3a1c'],[1,1,9,9,'#e2a87c'],[1,0,9,3,'#3b2414'],[0,1,3,6,'#3b2414'],[7,4,2,2,'#1b1b1b'],[7,4,1,1,'#fff'],[7,8,2,1,'#b5735a'],[5,12,5,3,'#e2a87c']]);
+  if(flags.race==='druida')sprite(X,Y,w,f,[[0,0,10,2,'#3f8a3a'],[1,-1,2,2,'#5ac85a'],[5,-1,2,2,'#5ac85a'],[8,-1,2,2,'#3f8a3a'],[0,10,2,9,'#2f7a3a'],[0,17,3,3,'#3f8a3a']]);
   const s=inv[sel];
   if(s){ctx.save();ctx.translate(X+(f>0?10:1),Y+14);ctx.scale(f,1);ctx.rotate(-.5+(P.swing>0?Math.sin(P.swingPh)*.9:0));ctx.drawImage(icon(s.id),-1,-10,11,11);ctx.restore()}
   if(P.hurt>0){ctx.fillStyle='rgba(255,40,40,.4)';ctx.fillRect(X,Y,w,P.h)}
@@ -1502,6 +1597,11 @@ function drawMob(m){
   else if(m.type==='chicken')parts=[[3+g,8,1,2,'#e8a33a'],[5-g,8,1,2,'#e8a33a'],[0,3,7,5,'#f4f4f0'],[1,4,3,3,'#d8d8cf'],[5,0,4,4,'#fafaf6'],[6,-1,2,1,'#d62828'],[9,1,1,1,'#f0b030'],[7,1,1,1,'#111'],[8,3,1,1,'#d62828']];
   else if(m.type==='cow')parts=[[1+g,9,2,4,'#3a2a20'],[4-g,9,2,4,'#3a2a20'],[9+g,9,2,4,'#3a2a20'],[12-g,9,2,4,'#3a2a20'],[0,2,13,8,'#f2f2ee'],[3,3,3,3,'#2a2a2a'],[8,5,3,3,'#2a2a2a'],[1,7,2,2,'#2a2a2a'],[12,0,4,7,'#e8e8e2'],[14,4,2,3,'#e8a0a0'],[12,-1,1,1,'#ddd'],[15,-1,1,1,'#ddd'],[14,1,1,1,'#111']];
   else if(m.type==='sheep')parts=[[2+g,9,2,3,'#3a3a3a'],[5-g,9,2,3,'#3a3a3a'],[8+g,9,2,3,'#3a3a3a'],[11-g,9,2,3,'#3a3a3a'],[0,2,12,8,'#f6f6f2'],[1,1,10,3,'#ffffff'],[2,5,3,3,'#e4e4de'],[8,6,3,3,'#e4e4de'],[10,2,4,6,'#4a4a4a'],[12,3,1,1,'#fff'],[13,5,1,2,'#6a6a6a'],[10,1,2,2,'#f6f6f2']];
+  else if(m.type==='wolf')parts=[[2+g,8,2,3,'#6a6f78'],[5-g,8,2,3,'#5a5f68'],[10+g,8,2,3,'#6a6f78'],[13-g,8,2,3,'#5a5f68'],[1,3,12,6,'#8a8f98'],[2,2,10,2,'#a8adb6'],[3,7,8,2,'#d8dce0'],[0,2,2,3,'#7a7f88'],[12,1,4,6,'#9aa0a8'],[15,4,1,2,'#222'],[12,0,1,2,'#6a6f78'],[14,0,1,2,'#6a6f78'],[14,3,1,1,'#ffd54a']];
+  else if(m.type==='scorpion')parts=[[3+g,6,1,1,'#4a3010'],[5-g,6,1,1,'#4a3010'],[7+g,6,1,1,'#4a3010'],[2,3,7,4,'#b8863a'],[3,2,5,2,'#d8a850'],[9,2,3,2,'#8a5a1a'],[11,1,2,2,'#8a5a1a'],[0,3,2,3,'#8a5a1a'],[0,1,2,2,'#8a5a1a'],[1,0,3,1,'#8a5a1a'],[3,1,1,2,'#d62828'],[9,3,1,1,'#111']];
+  else if(m.type==='skeleton')parts=[[2+g,19,3,8,'#e8e6dc'],[6-g,19,3,8,'#cfcdc2'],[1,10,9,10,'#e8e6dc'],[2,12,7,1,'#555'],[2,14,7,1,'#555'],[2,16,7,1,'#555'],[1,1,9,9,'#f0eee4'],[6,4,2,2,'#1a1a1a'],[3,4,2,2,'#1a1a1a'],[4,7,5,1,'#333'],[9,8,2,12,'#7a4e26'],[10,9,1,10,'#ddd']];
+  else if(m.type==='slime')parts=[[0,3,12,7,'#5ac85a'],[1,1,10,3,'#6ae06a'],[2,0,8,2,'#8af08a'],[3,4,2,3,'#143'],[7,4,2,3,'#143'],[2,2,2,1,'#c8ffc8']];
+  else if(m.type==='brute')parts=[[2+g,21,4,9,'#2a3a2a'],[8-g,21,4,9,'#223022'],[0,10,14,12,'#5a7a3a'],[0,10,14,3,'#6b8f45'],[0,20,14,2,'#3a2a1a'],[2,1,10,9,'#6aa84f'],[2,3,10,2,'#3a5a2a'],[8,5,2,2,'#ff3b30'],[6,8,6,1,'#1a2a12'],[10,12,4,4,'#6aa84f']];
   else if(m.type==='spider'){parts=[];for(let k=0;k<4;k++){parts.push([1+k*3+(k%2?-g:g),6,1,2,'#1a1a1a'],[k*3+(k%2?g:-g),0,1,2,'#1a1a1a'])}parts.push([0,1,8,6,'#2a2a2a'],[8,2,6,5,'#3a3a3a'],[11,3,2,1,'#ff3b30'],[12,5,1,1,'#ff3b30'],[9,4,1,1,'#ff3b30'])}
   else parts=[[2+g,19,3,8,'#3b2f5b'],[6-g,19,3,8,'#33284f'],[1,10,9,10,'#3d6fb5'],[1,17,3,2,'#6aa84f'],[1,1,9,9,'#6aa84f'],[1,0,9,2,'#4f8a3a'],[6,4,2,2,'#2a0c0c'],[5,7,4,1,'#2d4a22'],[5,12,8,3,'#6aa84f']];
   sprite(X,Y,m.w,f,parts);
@@ -1519,6 +1619,7 @@ if(!load()){first=true;newWorld()}
 setTimeout(cloudInit,0);
 cam.x=P.x-VW/2;cam.y=P.y-VH/2;
 if(first){helpOpen=true;$('help').classList.remove('hidden')}
+if(!flags.race&&!first)raceBegin();
 updModeBtn();setQuestMin(flags.qmin);questTick();
 let last=performance.now(),acc=0;
 function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;acc+=dt;while(acc>=1/60){tick(1/60);acc-=1/60}render();hud();requestAnimationFrame(frame)}
