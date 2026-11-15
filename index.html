@@ -89,6 +89,31 @@ img{image-rendering:pixelated;-webkit-user-drag:none;pointer-events:none}
 #ta span{font-size:10px;font-weight:700;letter-spacing:.5px}
 #tx{width:56px;height:56px;border-radius:50%;flex-direction:column;right:calc(104px + var(--sr));bottom:calc(92px + var(--sb));background:rgba(40,90,150,.55);box-shadow:inset 0 0 0 2px rgba(150,210,255,.45);font-size:10px;font-weight:700;text-align:center;line-height:1.05;color:#fff}
 #tx.cd{background:rgba(30,30,36,.6);color:#aaa}
+#title{position:fixed;inset:0;z-index:20;background:#0d0a20;overflow:hidden;font-family:var(--ui);color:#f3e2c0}
+#tcv{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;display:block}
+.tshade{position:absolute;inset:0;background:radial-gradient(120% 90% at 70% 50%,rgba(8,4,20,.0),rgba(8,4,20,.55))}
+.tlogo{position:absolute;left:calc(6vw + var(--sl));top:calc(10vh + var(--st));max-width:calc(100vw - min(340px,46vw) - 12vw - 16px)}
+.tk{font-size:clamp(9px,1.6vw,13px);letter-spacing:.32em;color:#ff9a3c;opacity:.95;margin-bottom:.5em}
+.tlogo h1{margin:0;line-height:.92;display:flex;align-items:flex-end;gap:.4em;flex-wrap:wrap}
+.tlogo h1 span{font-size:clamp(34px,min(8.4vw,17vh),96px);font-weight:700;letter-spacing:.06em;background:linear-gradient(180deg,#fff3c4 8%,#ffb347 55%,#e8561e 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px rgba(255,120,40,.45)) drop-shadow(0 4px 0 rgba(0,0,0,.55));animation:tfl 3.2s ease-in-out infinite}
+.tlogo h1 b{font-size:clamp(14px,2.6vw,24px);letter-spacing:.3em;border:2px solid #ff9a3c;color:#ffd9a0;padding:.1em .5em .1em .8em;border-radius:99px;margin-bottom:.6em;background:rgba(20,8,24,.5)}
+.ttag{margin-top:.8em;font-size:clamp(10px,1.7vw,15px);opacity:.8;max-width:34em}
+@keyframes tfl{0%,100%{filter:drop-shadow(0 0 14px rgba(255,120,40,.4)) drop-shadow(0 4px 0 rgba(0,0,0,.55))}50%{filter:drop-shadow(0 0 22px rgba(255,150,50,.7)) drop-shadow(0 4px 0 rgba(0,0,0,.55))}}
+.tmenu{position:absolute;right:calc(6vw + var(--sr));top:50%;transform:translateY(-46%);width:min(340px,46vw);display:flex;flex-direction:column;gap:9px}
+.tm{font-family:var(--ui);text-align:left;color:#f6e6c6;border:0;border-left:3px solid #ff9a3c;padding:10px 18px 10px 16px;cursor:pointer;position:relative;display:block;
+  background:linear-gradient(90deg,rgba(255,140,50,.20),rgba(30,12,40,.55) 70%,rgba(30,12,40,.15));clip-path:polygon(0 0,100% 0,calc(100% - 16px) 100%,0 100%);
+  transition:transform .15s,background .15s;animation:tin .5s both;-webkit-tap-highlight-color:transparent}
+.tm:nth-child(2){animation-delay:.07s}.tm:nth-child(3){animation-delay:.14s}.tm:nth-child(4){animation-delay:.21s}
+.tm .l{display:block;font-size:clamp(16px,2.8vw,22px);font-weight:700;letter-spacing:.06em}
+.tm small{display:block;font-size:clamp(10px,1.6vw,12.5px);opacity:.7;margin-top:2px;letter-spacing:.03em}
+.tm i{position:absolute;left:-3px;top:0;bottom:0;width:3px;background:#ff9a3c;box-shadow:0 0 12px 2px rgba(255,140,50,.8);opacity:.0;transition:opacity .15s}
+.tm:hover,.tm:active,.tm:focus-visible{transform:translateX(-8px);outline:0;background:linear-gradient(90deg,rgba(255,170,70,.45),rgba(60,22,50,.7) 75%,rgba(30,12,40,.2))}
+.tm:hover i,.tm:active i,.tm:focus-visible i{opacity:1}
+.tm.arm{border-left-color:#ff4a3a;background:linear-gradient(90deg,rgba(255,70,50,.45),rgba(60,12,30,.75))}
+@keyframes tin{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+.tfoot{position:absolute;left:calc(6vw + var(--sl));bottom:calc(10px + var(--sb));font-size:11px;opacity:.55;letter-spacing:.05em}
+@media (max-aspect-ratio:1/1){.tlogo{max-width:88vw;top:8vh}.tmenu{right:auto;left:50%;transform:translateX(-50%);top:auto;bottom:calc(14vh + var(--sb));width:min(340px,86vw)}}
+#help{z-index:25}
 #ta.on{background:rgba(255,200,120,.65)}
 @media (orientation:portrait){
   #tl,#tr,#tj{bottom:calc(var(--hb) + 16px + var(--sb))}
@@ -216,10 +241,17 @@ img{image-rendering:pixelated;-webkit-user-drag:none;pointer-events:none}
     <button class="btn" id="mCont">Seguir jugando</button>
     <button class="btn" id="mSave" style="background:#3d5a8a">Guardar partida</button>
     <button class="btn red" id="mExit">Guardar y salir</button></div></div></div>
-<div id="title" class="ov hidden" style="background:#1a140e"><div style="text-align:center;padding:20px">
-  <div style="font-size:34px;font-weight:700;color:#ffd54a;text-shadow:3px 3px 0 #000">Survive RPG</div>
-  <div id="tInfo" style="margin:10px 0 18px;font-size:15px;opacity:.85"></div>
-  <button class="btn big" id="tPlay" style="max-width:300px">Seguir jugando</button></div></div>
+<div id="title" class="hidden">
+  <canvas id="tcv"></canvas><div class="tshade"></div>
+  <header class="tlogo"><div class="tk">EXPANSIÓN I · RAÍCES DEL MUNDO</div><h1><span>SURVIVE</span><b>RPG</b></h1><div class="ttag">Sobrevive. Construye. Haz de este lugar un hogar.</div></header>
+  <nav class="tmenu">
+    <button class="tm" id="tCont"><i></i><span class="l">Continuar</span><small id="tSub"></small></button>
+    <button class="tm" id="tNew"><i></i><span class="l" id="tNewL">Nueva partida</span><small id="tNewS">Un mundo nuevo, solo para ti</small></button>
+    <button class="tm" id="tHelp"><i></i><span class="l">Cómo jugar</span><small>Controles y consejos</small></button>
+    <button class="tm" id="tSnd"><i></i><span class="l" id="tSndL">Sonido: sí</span></button>
+  </nav>
+  <div class="tfoot" id="tInfo"></div>
+</div>
 <div id="race" class="ov hidden" style="z-index:31"><div class="win" style="width:min(640px,96vw)"><div class="whead"><h3>Elige tu raza</h3></div><div class="wbody">
   <div class="sub" style="margin-top:0">Tu raza es permanente y define las habilidades que ganas al subir de nivel (1 a 20).</div>
   <div class="cards" id="raceCards" style="grid-template-columns:1fr 1fr"></div>
@@ -617,7 +649,7 @@ let fxs=[],arrows=[];
 function raceBegin(){const o=$('race'),c=$('raceCards');let sel_=null;c.innerHTML=Object.entries(RACES).map(([k,r])=>`<div class="card" data-rc="${k}" style="cursor:pointer"><div class="cname" style="font-size:18px">${r.n}</div><div class="sub" style="margin:0">${r.d}</div>${ABILS.filter(a=>a.r===k).map(a=>`<div class="sub" style="margin:2px 0 0"><b style="color:#ffd54a">Nv ${a.lvl}</b> ${a.n}${a.act?' ⚡':''}</div>`).join('')}</div>`).join('');
   const ok=$('raceOk');ok.disabled=true;ok.textContent='Elige una raza';o.classList.remove('hidden');
   c.onclick=e=>{const d=e.target.closest('[data-rc]');if(!d)return;sel_=d.dataset.rc;c.querySelectorAll('.card').forEach(x=>x.classList.toggle('ok',x===d));ok.disabled=false;ok.textContent='Ser '+RACES[sel_].n;snd('click')};
-  ok.onclick=()=>{if(!sel_)return;flags.race=sel_;const a=ABILS.find(a=>a.r===sel_&&a.act&&a.lvl<=prog.lvl);flags.ab=a?a.k:null;o.classList.add('hidden');P.hp=Math.min(maxHp(),P.hp);snd('craft');toast('Eres '+RACES[sel_].n,2.5,133);dirty()}}
+  ok.onclick=()=>{if(!sel_)return;flags.race=sel_;const a=ABILS.find(a=>a.r===sel_&&a.act&&a.lvl<=prog.lvl);flags.ab=a?a.k:null;o.classList.add('hidden');if(needHelp){needHelp=false;helpOpen=true;$('help').classList.remove('hidden')}P.hp=Math.min(maxHp(),P.hp);snd('craft');toast('Eres '+RACES[sel_].n,2.5,133);dirty()}}
 // Los monstruos suben de nivel con los días y con tu nivel
 function mobLvl(){const b=1+Math.floor((day-1)/3)+Math.floor((prog.lvl-1)/2);return clamp(b+(rnd()<.35?1:0)-(rnd()<.2?1:0),1,40)}
 function newPlayer(){P={x:spawn.x,y:spawn.y,vx:0,vy:0,w:11,h:27,on:false,wet:false,hp:maxHp(),hu:100,th:100,face:1,peak:spawn.y,hurt:0,atkCd:0,drinkCd:0,placeCd:0,swing:0,swingPh:0,walk:0,kb:0,dead:false,fish:null,hitSnd:0,ladder:false}}
@@ -1382,14 +1414,77 @@ function togglePanel(){panelOpen?closePanel():openPanel(near([12,13,16])?'craft'
 function setQuestMin(m){flags.qmin=m?1:0;$('quest').classList.toggle('min',!!m);$('qH').textContent=m?'›':'‹'}
 const qTog=e=>{e.preventDefault();e.stopPropagation();unlockAudio();snd('click');setQuestMin(!flags.qmin)};
 $('quest').addEventListener('touchstart',qTog,{passive:false});$('quest').addEventListener('mousedown',qTog);
-let menuOpen=false,titleOpen=false;
+let menuOpen=false,titleOpen=false,gameStarted=false,needHelp=false,newArm=0;
+const hasSave=()=>{try{if(localStorage.getItem(SK))return true}catch(_){}return gameStarted};
+function titleRefresh(){const has=hasSave();$('tCont').classList.toggle('hidden',!has);
+  $('tSub').textContent=`Día ${day} · Nivel ${prog.lvl}${flags.race?' · '+RACES[flags.race].n:''} · ${coins} monedas`;
+  newArm=0;$('tNew').classList.remove('arm');$('tNewL').textContent='Nueva partida';$('tNewS').textContent=has?'Empieza desde cero':'Un mundo nuevo, solo para ti';
+  $('tSndL').textContent='Sonido: '+(muted?'no':'sí');
+  $('tInfo').textContent=has?(cloudState==='ok'?'Tu partida también está guardada en tu cuenta':'Tu partida se guarda sola en este aparato'):'Todavía no hay ninguna partida guardada'}
+function openTitle(){titleOpen=true;$('title').classList.remove('hidden');titleRefresh();titleAnim(true)}
+function closeTitle(){titleOpen=false;$('title').classList.add('hidden');titleAnim(false)}
+$('tCont').addEventListener('click',()=>{unlockAudio();gameStarted=true;closeTitle();if(!flags.race)raceBegin()});
+$('tNew').addEventListener('click',()=>{unlockAudio();
+  if(hasSave()&&Date.now()-newArm>3500){newArm=Date.now();$('tNew').classList.add('arm');$('tNewL').textContent='¿Borrar la partida?';$('tNewS').textContent='Toca otra vez para confirmar';snd('click');return}
+  try{localStorage.removeItem(SK);localStorage.removeItem(SK+'_prev')}catch(_){}
+  gameStarted=true;needHelp=true;newWorld();closeTitle();save(true)});
+$('tHelp').addEventListener('click',()=>{unlockAudio();helpOpen=true;$('help').classList.remove('hidden')});
+$('tSnd').addEventListener('click',()=>{unlockAudio();muted=!muted;$('bSndI').src=muted?MUTE:SPK;$('tSndL').textContent='Sonido: '+(muted?'no':'sí');snd('click')});
+addEventListener('keydown',e=>{if(titleOpen&&!helpOpen&&e.code==='Enter'){(hasSave()?$('tCont'):$('tNew')).click();e.preventDefault()}});
+// Escena animada del menú: campamento junto a una fogata al anochecer (todo dibujado con píxeles)
+let tRaf=0;
+function titleAnim(on){cancelAnimationFrame(tRaf);if(!on)return;
+  const cv=$('tcv'),g=cv.getContext('2d');let W,H,ps,seed_=7;const R=()=>(seed_=(seed_*16807)%2147483647)/2147483647;
+  const stars=[],emb=[],ff=[],trees=[];
+  function fit(){ps=Math.max(2,Math.round(innerHeight/150));W=Math.ceil(innerWidth/ps);H=Math.ceil(innerHeight/ps);cv.width=W;cv.height=H;seed_=7;stars.length=0;trees.length=0;ff.length=0;
+    for(let i=0;i<70;i++)stars.push({x:R()*W,y:R()*H*.5,p:R()*6,b:R()});
+    for(let i=0;i<14;i++)trees.push({x:(i<7?R()*W*.14:W*.84+R()*W*.16)+(i%3)*2,h:H*(.16+R()*.14),w:6+R()*5});
+    for(let i=0;i<9;i++)ff.push({x:R()*W,y:H*(.62+R()*.16),p:R()*9})}
+  fit();addEventListener('resize',fit);
+  const mix=(a,b,k)=>[a[0]+(b[0]-a[0])*k,a[1]+(b[1]-a[1])*k,a[2]+(b[2]-a[2])*k];
+  const rgb=c=>`rgb(${c[0]|0},${c[1]|0},${c[2]|0})`;
+  let last=performance.now(),T=0;
+  function frame(now){if(!titleOpen)return;const dt=Math.min(.05,(now-last)/1000);last=now;T+=dt;
+    const hor=Math.floor(H*.66),gr=Math.floor(H*.8);
+    // cielo en bandas (de índigo a brasa)
+    for(let y=0;y<hor;y+=2){const k=Math.floor(y/hor*16)/16;const c=k<.6?mix([10,8,34],[62,26,76],k/.6):mix([62,26,76],[232,118,54],Math.pow((k-.6)/.4,1.6));g.fillStyle=rgb(c);g.fillRect(0,y,W,2)}
+    for(const s of stars){g.globalAlpha=(.35+.65*Math.abs(Math.sin(T*1.3+s.p)))*(1-s.y/(H*.5)*.7);g.fillStyle='#fff';g.fillRect(s.x|0,s.y|0,1,1)}g.globalAlpha=1;
+    // luna
+    const mx=Math.floor(W*.82),my=Math.floor(H*.2),mr=Math.max(5,Math.floor(H*.045));g.fillStyle='#f6eed2';for(let dy=-mr;dy<=mr;dy++)for(let dx=-mr;dx<=mr;dx++)if(dx*dx+dy*dy<=mr*mr)g.fillRect(mx+dx,my+dy,1,1);
+    g.fillStyle='#d8cfae';g.fillRect(mx-2,my-1,2,2);g.fillRect(mx+2,my+2,2,2);g.fillRect(mx-1,my+3,1,1);
+    // estrella fugaz
+    const sp=(T%11)/1.1;if(sp<1){const sx=W*.55+sp*W*.2,sy=H*.04+sp*H*.14;for(let i=0;i<9;i++){g.globalAlpha=(1-i/9)*(1-sp);g.fillStyle='#fff';g.fillRect((sx-i*1.4)|0,(sy-i*.7)|0,1,1)}g.globalAlpha=1}
+    // montañas con parallax lento
+    const L=[[.58,.05,'#3a2052',.9],[.63,.06,'#2a1640',1.6],[.69,.07,'#1a0e2c',2.6]];
+    L.forEach(([b,a,col,sp_],i)=>{g.fillStyle=col;const base=H*b,amp=H*a;for(let x=0;x<W;x++){const u=(x+T*sp_*3)/ (14+i*5);const y=base-amp*(Math.sin(u+i*2)+.55*Math.sin(u*2.3+i)+.3*Math.sin(u*5.1));g.fillRect(x,y|0,1,H)}});
+    // suelo
+    g.fillStyle='#120a16';g.fillRect(0,gr,W,H-gr);g.fillStyle='#1d1020';g.fillRect(0,gr,W,1);
+    // pinos
+    for(const t of trees){g.fillStyle='#0b0610';const bw=t.w;for(let r=0;r<t.h;r++){const w=Math.max(1,bw*(1-r/t.h)*(1+.25*Math.sin(r*.9)));g.fillRect((t.x-w/2)|0,(gr-r)|0,Math.ceil(w),1)}g.fillRect((t.x-1)|0,gr,2,2)}
+    // fogata
+    const fx=Math.floor(W*.26),fy=gr,fl=.85+.15*Math.sin(T*13)+.1*Math.sin(T*7.3);
+    const gl=g.createRadialGradient(fx,fy-6,2,fx,fy-6,H*.5);gl.addColorStop(0,`rgba(255,150,60,${.42*fl})`);gl.addColorStop(.5,`rgba(255,100,40,${.14*fl})`);gl.addColorStop(1,'rgba(255,100,40,0)');g.fillStyle=gl;g.fillRect(0,0,W,H);
+    g.fillStyle='rgba(255,140,60,.10)';g.fillRect(fx-22,fy+1,44,2);
+    // figuras sentadas (el viejo guía y el héroe), con luz de fuego en el borde
+    const fig=(x,dir,elder)=>{g.fillStyle='#09050d';g.fillRect(x-3,fy-9,7,9);g.fillRect(x-2,fy-14,5,5);g.fillStyle='rgba(255,150,70,.85)';g.fillRect(dir>0?x+3:x-3,fy-9,1,8);g.fillRect(dir>0?x+2:x-2,fy-14,1,4);
+      if(elder){g.fillStyle='#cfc8d8';g.fillRect(x-2,fy-14,5,1);g.fillRect(dir>0?x-2:x+2,fy-13,1,3);g.fillStyle='#4a2a14';g.fillRect(x+(dir>0?-6:6),fy-20,1,20);g.fillStyle='#ffd54a';g.fillRect(x+(dir>0?-7:5),fy-22,3,2)}
+      else{g.fillStyle='#3f8a3a';g.fillRect(x-2,fy-15,5,1);g.fillStyle='#5ac85a';g.fillRect(x,fy-16,1,1)}};
+    fig(fx-16,1,true);fig(fx+17,-1,false);
+    g.fillStyle='#3a2210';g.fillRect(fx-7,fy-2,14,2);g.fillStyle='#5a3418';g.fillRect(fx-6,fy-3,5,1);g.fillRect(fx+1,fy-3,5,1);
+    for(let l=0;l<3;l++){const hw=5-l*1.4,h=(13-l*3.5)*fl,col=['#d8461a','#ff9a2a','#fff0a0'][l];g.fillStyle=col;for(let r=0;r<h;r++){const w=hw*(1-r/h),sw=Math.sin(T*9+r*.5+l)*1.1*(r/h);g.fillRect((fx-w+sw)|0,(fy-3-r)|0,Math.max(1,Math.ceil(w*2)),1)}}
+    // brasas
+    if(emb.length<22&&R()<.5)emb.push({x:fx+(R()-.5)*8,y:fy-8,vx:(R()-.5)*8,vy:-(10+R()*16),l:1});
+    for(let i=emb.length-1;i>=0;i--){const e=emb[i];e.l-=dt*.45;e.x+=(e.vx+Math.sin(T*3+i)*5)*dt;e.y+=e.vy*dt;if(e.l<=0){emb.splice(i,1);continue}g.globalAlpha=e.l;g.fillStyle=e.l>.5?'#ffd070':'#ff7a2a';g.fillRect(e.x|0,e.y|0,1,1)}g.globalAlpha=1;
+    // luciérnagas
+    for(const f of ff){const a=.2+.8*Math.max(0,Math.sin(T*1.6+f.p));g.globalAlpha=a;g.fillStyle='#e8ff7a';g.fillRect((f.x+Math.sin(T*.6+f.p)*6)|0,(f.y+Math.cos(T*.8+f.p*2)*3)|0,1,1)}g.globalAlpha=1;
+    tRaf=requestAnimationFrame(frame)}
+  tRaf=requestAnimationFrame(frame)}
 function openMenu(){if(P.dead)return;menuOpen=true;$('menu').classList.remove('hidden');$('mInfo').innerHTML=`Día ${day} · Nivel ${prog.lvl} · ${coins} monedas<br>${cloudState==='ok'?'Guardada en tu cuenta '+ago(cloudAt)+' (sirve en todos tus aparatos)':cloudState==='full'?'Tu cuenta no tiene espacio: solo se guarda en este aparato':'Solo se guarda en este aparato'}`;ptr.down=false;abt.down=false;tb.l=tb.r=tb.j=false;document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'))}
 function closeMenu(){menuOpen=false;$('menu').classList.add('hidden')}
 $('bMenu').addEventListener('click',()=>{unlockAudio();menuOpen?closeMenu():openMenu()});
 $('mX').addEventListener('click',closeMenu);$('mCont').addEventListener('click',closeMenu);
 $('mSave').addEventListener('click',()=>{save(true);snd('craft');toast('Partida guardada',1.8);closeMenu()});
-$('mExit').addEventListener('click',()=>{save(true);closeMenu();titleOpen=true;$('tInfo').textContent=`Partida guardada · Día ${day} · Nivel ${prog.lvl}`;$('title').classList.remove('hidden')});
-$('tPlay').addEventListener('click',()=>{unlockAudio();titleOpen=false;$('title').classList.add('hidden')});
+$('mExit').addEventListener('click',()=>{save(true);closeMenu();gameStarted=true;openTitle()});
 $('bInvI').src=BAG;$('bVilI').src=HOUSE;$('coinI').src=iconURL(200);
 $('bVil').addEventListener('click',()=>{unlockAudio();if(panelOpen&&panelMode==='village')closePanel();else{vilTab='res';openPanel('village')}});
 $('bSndI').src=SPK;
@@ -1400,7 +1495,7 @@ $('bHelp').addEventListener('click',()=>{helpOpen=true;$('help').classList.remov
 $('hGo').addEventListener('click',()=>{closeHelp();grabFocus()});
 $('focusHint').addEventListener('mousedown',e=>{e.preventDefault();grabFocus();$('focusHint').classList.add('hidden')});$('hX').addEventListener('click',closeHelp);
 $('rotOk').addEventListener('click',()=>{rotDismiss=true;checkRotate()});
-function newWorld(){gen((rnd()*1e9)|0);newPlayer();inv=new Array(24).fill(null);addItem(103,3);mobs=[];drops=[];time=.05;day=1;rain=false;weatherT=100;warned={};flags={story:1};qi=0;qKey='';coins=0;prog={lvl:1,xp:0,sp:0,sk:{}};bdmg=new Map();floats=[];npcs=[];pantry=new Array(12).fill(null);houses=[];arriveCd=0;hordeActive=false;sel=0;cam.x=P.x-VW/2;cam.y=P.y-VH/2;dirty();raceBegin()}
+function newWorld(noRace){gen((rnd()*1e9)|0);newPlayer();inv=new Array(24).fill(null);addItem(103,3);mobs=[];drops=[];time=.05;day=1;rain=false;weatherT=100;warned={};flags={story:1};qi=0;qKey='';coins=0;prog={lvl:1,xp:0,sp:0,sk:{}};bdmg=new Map();floats=[];npcs=[];pantry=new Array(12).fill(null);houses=[];arriveCd=0;hordeActive=false;sel=0;cam.x=P.x-VW/2;cam.y=P.y-VH/2;dirty();if(!noRace)raceBegin()}
 
 // HUD con corazones, comida y gotas
 function buildPips(id){$(id).innerHTML='<i></i>'.repeat(10)}
@@ -1427,7 +1522,7 @@ function encChunk(c){let s='';for(let i=0;i<c.t.length;i++)s+=String.fromCharCod
 function decChunk(cx,b64){const s=atob(b64),t=new Uint8Array(CW*H);for(let i=0;i<s.length&&i<t.length;i++)t[i]=s.charCodeAt(i);const sf=new Int16Array(CW);for(let lx=0;lx<CW;lx++)sf[lx]=hgt(cx*CW+lx);const c={t,sf,top:new Int16Array(CW),mod:true};for(let lx=0;lx<CW;lx++)calcTop(c,lx);return c}
 let lastStateStr='';
 function gameState(){return{v:4,savedAt:localSavedAt,seed,P:{x:P.x,y:P.y,hp:P.hp,hu:P.hu,th:P.th},inv,time,day,spawn,worldSpawn,sel,warned,flags,qi,chests,coins,pantry,prog,npcs:npcs.map(n=>({role:n.role,name:n.name,g:n.g,x:n.x,y:n.y,hp:n.hp,home:n.home,morale:n.morale,hungry:n.hungry,homeless:n.homeless,stock:n.stock}))}}
-function save(force){try{
+function save(force){if(!gameStarted)return;try{
   localSavedAt=Date.now();const st=gameState();lastStateStr=JSON.stringify(st);
   const mods={};for(const[cx,c]of chunks)if(c.mod)mods[cx]=encChunk(c);
   st.mods=mods;lastSaveStr=JSON.stringify(st);
@@ -1456,7 +1551,7 @@ function cloudPush(force){if(!cloudDoc||!lastStateStr)return;if(!force&&Date.now
     await cloudDoc.set({json:str,savedAt:at,day,lvl:prog.lvl,v:4});cloudAt=Date.now();cloudState='ok'
   }catch(e){dirty.forEach(cx=>cloudDirty.add(cx));cloudState=e&&e.code==='quota_exceeded'?'full':'err'}
   finally{cloudBusy=false;if(cloudPending){cloudPending=false;cloudPush(true)}}})()}
-function afterLoad(){if(!flags.race)raceBegin();cam.x=P.x-VW/2;cam.y=P.y-VH/2;qKey='';setQuestMin(flags.qmin);helpOpen=false;$('help').classList.add('hidden');dirty()}
+function afterLoad(){gameStarted=true;if(!flags.race&&!titleOpen)raceBegin();if(titleOpen)titleRefresh();cam.x=P.x-VW/2;cam.y=P.y-VH/2;qKey='';setQuestMin(flags.qmin);helpOpen=false;$('help').classList.add('hidden');dirty()}
 function ago(t){if(!t)return'nunca';const m=Math.round((Date.now()-t)/60000);return m<1?'hace un momento':m<60?`hace ${m} min`:m<1440?`hace ${Math.round(m/60)} h`:`hace ${Math.round(m/1440)} día(s)`}
 function choose(title,a,b){return new Promise(res=>{const o=$('choice');$('chT').textContent=title;$('chA').innerHTML=a;$('chB').innerHTML=b;o.classList.remove('hidden');
   const done=v=>{o.classList.add('hidden');$('chA').onclick=$('chB').onclick=null;res(v)};$('chA').onclick=()=>done('a');$('chB').onclick=()=>done('b')})}
@@ -1614,12 +1709,10 @@ function drawMob(m){
 
 // ---------- Inicio ----------
 resize();addEventListener('resize',resize);addEventListener('orientationchange',()=>setTimeout(resize,200));
-let first=false;
-if(!load()){first=true;newWorld()}
+if(load())gameStarted=true;else newWorld(true);
 setTimeout(cloudInit,0);
 cam.x=P.x-VW/2;cam.y=P.y-VH/2;
-if(first){helpOpen=true;$('help').classList.remove('hidden')}
-if(!flags.race&&!first)raceBegin();
+openTitle();
 updModeBtn();setQuestMin(flags.qmin);questTick();
 let last=performance.now(),acc=0;
 function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;acc+=dt;while(acc>=1/60){tick(1/60);acc-=1/60}render();hud();requestAnimationFrame(frame)}
